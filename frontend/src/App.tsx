@@ -6,11 +6,12 @@ import { useAuth } from './hooks/useAuth';
 import ErrorBoundary from './components/ErrorBoundary';
 import AppLayout from './components/Layout/AppShell';
 
-// Login + Setup stay eager — they are pre-auth, tiny, and avoid a flash
+// Login + Setup + SignUp stay eager — they are pre-auth, tiny, and avoid a flash
 // for the first paint. Everything else is lazy so the operator's first
 // authenticated screen ships as a small chunk.
 import Login from './pages/Login';
 import Setup from './pages/Setup';
+import SignUp from './pages/SignUp';
 
 // FIX-3 (v2.63.9): code-split all 17 main authenticated pages so the
 // initial bundle is just Login/Setup + the first authenticated route's
@@ -93,7 +94,7 @@ function MissionEditLegacyRedirect() {
 }
 
 export default function App() {
-  const { isAuthenticated, needsSetup, loading, login, logout, completeSetup } = useAuth();
+  const { isAuthenticated, needsSetup, loading, login, register, logout, completeSetup } = useAuth();
 
   if (loading) {
     return (
@@ -107,6 +108,8 @@ export default function App() {
     <ErrorBoundary>
       <Routes>
         {/* Public routes — no auth required */}
+        <Route path="/login" element={needsSetup ? <Setup onSetupComplete={completeSetup} /> : <Login onLogin={login} />} />
+        <Route path="/signup" element={needsSetup ? <Setup onSetupComplete={completeSetup} /> : <SignUp onRegister={register} />} />
         <Route path="/tos/accept" element={<Suspense fallback={PageFallback}><TosAcceptance /></Suspense>} />
         <Route path="/intake/:token" element={<Suspense fallback={PageFallback}><CustomerIntake /></Suspense>} />
         <Route path="/client/mission/:missionId" element={<Suspense fallback={PageFallback}><ClientMissionDetail /></Suspense>} />

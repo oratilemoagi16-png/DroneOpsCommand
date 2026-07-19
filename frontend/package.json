@@ -1,7 +1,7 @@
 {
   "name": "opsdeck-frontend",
   "private": true,
-  "version": "2.80.4",
+  "version": "2.80.5",
   "description": "Opsdeck v2 — mission management, flight log analysis, GPS flight replay with video export, AI reports, invoicing, and airspace monitoring",
   "keywords": [
     "drone",

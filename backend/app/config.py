@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -83,6 +84,9 @@ class Settings(BaseSettings):
     # Demo mode
     demo_mode: bool = False
     demo_reset_interval_hours: int = 24
+
+    # Public user registration
+    public_registration_enabled: bool = Field(default=False, validation_alias="PUBLIC_REGISTRATION_ENABLED")
 
     # ntfy (ADR-0036 — replaces Pushover transport for ADR-0002 §5
     # silent-drift watchdog + ADR-0003 zero-touch key rotation alerts).

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -179,6 +180,13 @@ export default function Login({ onLogin }: LoginProps) {
           </Stack>
         </form>
       </Card>
+
+      <Text ta="center" size="sm" c="#5a6478" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
+        Don't have an account?{' '}
+        <Text component={Link} to="/signup" c="#00d4ff" td="underline" inherit>
+          Sign up
+        </Text>
+      </Text>
 
       <Text size="xs" c="#3a3f4a" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
         v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''}

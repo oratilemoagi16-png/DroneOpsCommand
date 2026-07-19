@@ -573,7 +573,7 @@ logger.info("MultiPartParser spool threshold set to 4 MB (large uploads spool to
 app = FastAPI(
     title="Opsdeck v2",
     description="Mission management, flight log analysis, AI report generation, invoicing, telemetry visualization, and real-time airspace monitoring for commercial drone operators.",
-    version="2.80.4",
+    version="2.80.5",
     lifespan=lifespan,
 )
 

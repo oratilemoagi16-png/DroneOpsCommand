@@ -4,6 +4,20 @@
 
 Notable changes to Opsdeck v2. Dates are absolute (YYYY-MM-DD, UTC).
 
+## 2026-07-19 — feat(auth): public sign-up — v2.80.5
+
+Add a public user registration flow, gated by an opt-in env flag.
+
+* New `POST /api/auth/register` endpoint creates a user account and returns
+  access/refresh tokens. Disabled by default; enable with
+  `PUBLIC_REGISTRATION_ENABLED=true`.
+* Password complexity, uniqueness, and confirm-password checks reuse the
+  existing bcrypt/auth machinery.
+* New frontend `SignUp.tsx` page with live password-rule feedback and a
+  link back to login.
+* `Login.tsx` now links to `/signup` when registration is enabled.
+* `useAuth` hook exposes `register()` and `App.tsx` routes `/signup`.
+
 ## 2026-07-19 — rebrand: Opsdeck v2 — v2.80.4
 
 Rebrand the application to **Opsdeck v2** across user-visible surfaces and

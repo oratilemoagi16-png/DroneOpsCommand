@@ -118,7 +118,7 @@ function NavContent({
           px={4}
           style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '15px' }}
         >
-          v2.80.4
+          v2.80.5
         </Text>
       </div>
     </>
@@ -366,7 +366,7 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
                 fontSize: '15px',
               }}
             >
-              v2.80.4
+              v2.80.5
             </Text>
           </AppShell.Section>
         </AppShell.Navbar>
