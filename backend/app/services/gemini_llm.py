@@ -7,6 +7,10 @@ from app.services.ollama import SYSTEM_PROMPT_TEMPLATE
 
 logger = logging.getLogger("doc.gemini_llm")
 
+# httpx logs the full request URL at INFO, which would expose the API key.
+logging.getLogger("httpx").setLevel(logging.WARNING)
+logging.getLogger("httpcore").setLevel(logging.WARNING)
+
 
 async def generate_report(
     user_narrative: str,

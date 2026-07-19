@@ -4,6 +4,23 @@
 
 Notable changes to DroneOpsCommand. Dates are absolute (YYYY-MM-DD, UTC).
 
+## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.3
+
+Adds Gemini as a third LLM provider for mission report generation, alongside
+Claude and Ollama. Default model updated to `gemini-3.5-flash` and API-key
+logging hardened.
+
+* New backend service `app/services/gemini_llm.py` calls the Gemini
+  `generateContent` REST endpoint via the existing `httpx` client; the API key
+  in the query string is never logged.
+* Dispatcher, status endpoint, and settings schema updated to recognize
+  `gemini` as a valid `llm_provider` value.
+* Settings page (`AiTab.tsx`) exposes provider selection, API key, and model
+  inputs for Gemini; default model is `gemini-3.5-flash`.
+* New env vars: `LLM_PROVIDER`, `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`,
+  `GEMINI_API_KEY`, and `GEMINI_MODEL`; propagated to backend and worker in
+  `docker-compose.yml`.
+
 ## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.2
 
 Adds Gemini as a third LLM provider for mission report generation, alongside
