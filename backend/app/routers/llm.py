@@ -27,6 +27,14 @@ async def get_llm_status(
             "model_available": True,
         }
 
+    if provider == "gemini":
+        return {
+            "status": "online",
+            "provider": "gemini",
+            "configured_model": settings.gemini_model,
+            "model_available": bool(settings.gemini_api_key),
+        }
+
     # Ollama provider — check live status
     result = await check_ollama_status()
     result["provider"] = "ollama"

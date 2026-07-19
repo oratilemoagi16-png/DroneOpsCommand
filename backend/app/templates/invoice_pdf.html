@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Liberation Sans', 'Noto Sans', Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    color: #1a1a2e;
+    line-height: 1.5;
+    background: #fff;
+  }
+
+  .header {
+    background: linear-gradient(135deg, {{ brand_primary_color | default('#050608') }} 0%, {{ brand_primary_color | default('#050608') }}dd 100%);
+    color: #e8edf2;
+    padding: 30px 40px;
+    margin: -10px -10px 0 -10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Liberation Sans', 'Noto Sans', Arial, sans-serif; font-weight: 700; text-transform: uppercase;
+    font-size: 28pt;
+    letter-spacing: 2px;
+  }
+
+  .logo .hq { color: {{ brand_accent_color | default('#00d4ff') }}; }
+
+  .logo-image { max-height: 50px; max-width: 180px; margin-bottom: 6px; }
+
+  .invoice-title {
+    font-size: 16pt;
+    font-weight: 600;
+    color: {{ brand_accent_color | default('#00d4ff') }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .content { padding: 30px 40px; }
+
+  .grid {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+  }
+
+  .box {
+    width: 48%;
+  }
+
+  .box-title {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5a6478;
+    margin-bottom: 6px;
+  }
+
+  .box-value {
+    font-size: 11pt;
+    font-weight: 600;
+  }
+
+  .muted {
+    color: #5a6478;
+    font-size: 10pt;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+  }
+
+  th {
+    text-align: left;
+    padding: 10px 12px;
+    background: #f5f7fa;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #5a6478;
+    border-bottom: 2px solid #e0e6ed;
+  }
+
+  td {
+    padding: 12px;
+    border-bottom: 1px solid #e0e6ed;
+    vertical-align: top;
+  }
+
+  .right { text-align: right; }
+
+  .totals {
+    width: 300px;
+    margin-left: auto;
+    margin-top: 10px;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e6ed;
+  }
+
+  .totals-row.total {
+    font-size: 13pt;
+    font-weight: 700;
+    border-bottom: none;
+    color: {{ brand_primary_color | default('#050608') }};
+  }
+
+  .notes {
+    margin-top: 30px;
+    padding: 15px;
+    background: #f5f7fa;
+    border-radius: 6px;
+  }
+
+  .footer {
+    margin-top: 40px;
+    font-size: 9pt;
+    color: #5a6478;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div>
+      {% if company_logo %}
+        <img src="file://{{ upload_dir }}/{{ company_logo }}" class="logo-image" alt="logo">
+      {% else %}
+        <div class="logo">{{ company_name | default('Opsdeck') }} <span class="hq">{{ company_tagline | default('Mission Operations') }}</span></div>
+      {% endif %}
+    </div>
+    <div class="invoice-title">Invoice</div>
+  </div>
+
+  <div class="content">
+    <div class="grid">
+      <div class="box">
+        <div class="box-title">Billed To</div>
+        <div class="box-value">{{ customer.name | default('') }}</div>
+        <div class="muted">{{ customer.company | default('') }}</div>
+        <div class="muted">{{ customer.email | default('') }}</div>
+      </div>
+      <div class="box">
+        <div class="box-title">Invoice Details</div>
+        <div class="box-value">{{ invoice.invoice_number | default('—') }}</div>
+        <div class="muted">Mission: {{ mission.title | default('') }}</div>
+        <div class="muted">Date: {{ invoice.created_at | default('') }}</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th class="right">Category</th>
+          <th class="right">Qty</th>
+          <th class="right">Unit Price</th>
+          <th class="right">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in invoice.line_items %}
+        <tr>
+          <td>{{ item.description }}</td>
+          <td class="right">{{ item.category }}</td>
+          <td class="right">{{ item.quantity }}</td>
+          <td class="right">{{ '%.2f' % item.unit_price }}</td>
+          <td class="right">{{ '%.2f' % item.total }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <div class="totals">
+      <div class="totals-row">
+        <span>Subtotal</span>
+        <span>{{ '%.2f' % invoice.subtotal }}</span>
+      </div>
+      <div class="totals-row">
+        <span>Tax ({{ invoice.tax_rate * 100 }}%)</span>
+        <span>{{ '%.2f' % invoice.tax_amount }}</span>
+      </div>
+      {% if invoice.deposit_required and invoice.deposit_amount > 0 %}
+      <div class="totals-row">
+        <span>Deposit Required</span>
+        <span>{{ '%.2f' % invoice.deposit_amount }}</span>
+      </div>
+      {% endif %}
+      <div class="totals-row total">
+        <span>Total</span>
+        <span>{{ '%.2f' % invoice.total }}</span>
+      </div>
+      {% if invoice.deposit_required and invoice.deposit_amount > 0 %}
+      <div class="totals-row">
+        <span>Balance Due</span>
+        <span>{{ '%.2f' % (invoice.total - invoice.deposit_amount) }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if invoice.notes %}
+    <div class="notes">
+      <div class="box-title">Notes</div>
+      <div>{{ invoice.notes }}</div>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+      Generated by {{ company_name | default('Opsdeck') }} on {{ generated_at }}.
+      {% if company_contact_email %}Contact: {{ company_contact_email }}{% endif %}
+    </div>
+  </div>
+</body>
+</html>

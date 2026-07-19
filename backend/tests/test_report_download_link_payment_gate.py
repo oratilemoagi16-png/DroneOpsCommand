@@ -44,7 +44,7 @@ def _mission(
 
 def _invoice(*, paid_in_full: bool = False, total: float = 400.50):
     return SimpleNamespace(
-        invoice_number="BARNARDHQ-2026-0005",
+        invoice_number="OPSDECK-2026-0005",
         paid_in_full=paid_in_full,
         total=total,
     )

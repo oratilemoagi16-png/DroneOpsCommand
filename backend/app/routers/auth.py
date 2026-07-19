@@ -33,7 +33,7 @@ from app.auth.jwt import (
 from app.config import settings
 from app.database import get_db
 from app.models.user import User
-from app.schemas.auth import LoginRequest, RefreshRequest, TokenResponse
+from app.schemas.auth import LoginRequest, RefreshRequest, RegisterRequest, TokenResponse
 
 logger = logging.getLogger("doc.auth")
 
@@ -140,6 +140,57 @@ async def initial_setup(request: Request, body: SetupRequest, db: AsyncSession =
         "username": admin.username,
         "access_token": create_access_token({"sub": admin.username}),
         "refresh_token": create_refresh_token({"sub": admin.username}),
+        "token_type": "bearer",
+    }
+
+
+
+# Public registration
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+@router.post("/register")
+@limiter.limit("5/minute")
+async def register(request: Request, body: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    """Create a new user account. Disabled by default; set
+    PUBLIC_REGISTRATION_ENABLED=true to allow open sign-up.
+    """
+    client_ip = get_remote_address(request)
+    logger.info("Registration attempt: user='%s' ip=%s", body.username, client_ip)
+
+    if not settings.public_registration_enabled:
+        logger.warning("Registration rejected — public registration is disabled (ip=%s)", client_ip)
+        raise HTTPException(status_code=403, detail="Public registration is disabled")
+
+    if body.password != body.confirm_password:
+        raise HTTPException(status_code=400, detail="Passwords do not match")
+
+    existing = await db.execute(select(User).where(User.username == body.username.strip()))
+    if existing.scalar_one_or_none():
+        logger.warning("Registration rejected — username '%s' already exists (ip=%s)", body.username, client_ip)
+        raise HTTPException(status_code=409, detail="Username already taken")
+
+    failures = check_password_complexity(body.password)
+    if failures:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Password does not meet complexity requirements: {'; '.join(failures)}",
+        )
+
+    new_hash = await hash_password_async(body.password)
+    roundtrip_ok = await verify_password_async(body.password, new_hash)
+    if not roundtrip_ok:
+        logger.critical("REGISTER: bcrypt roundtrip FAILED for user '%s' (ip=%s)", body.username, client_ip)
+        raise HTTPException(status_code=500, detail="Password hashing failed — please retry")
+
+    user = User(username=body.username.strip(), hashed_password=new_hash)
+    db.add(user)
+    await db.commit()
+
+    logger.info("Registration SUCCESS: user='%s' ip=%s", user.username, client_ip)
+    return {
+        "status": "ok",
+        "username": user.username,
+        "access_token": create_access_token({"sub": user.username}),
+        "refresh_token": create_refresh_token({"sub": user.username}),
         "token_type": "bearer",
     }
 

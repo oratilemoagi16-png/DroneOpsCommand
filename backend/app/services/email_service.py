@@ -231,7 +231,7 @@ async def send_intake_email(
     msg = MIMEMultipart()
     msg["From"] = f"{smtp['smtp_from_name']} <{smtp['smtp_from_email']}>"
     msg["To"] = to_email
-    cn = branding.get("company_name", "DroneOps")
+    cn = branding.get("company_name", "Opsdeck")
     subject = f"Complete Your Customer Profile — {cn}" if is_existing_customer else f"Welcome to {cn} — Complete Your Onboarding"
     msg["Subject"] = subject
     msg.attach(MIMEText(html_body, "html"))
@@ -318,7 +318,7 @@ async def send_client_portal_email(
     msg = MIMEMultipart()
     msg["From"] = f"{smtp['smtp_from_name']} <{smtp['smtp_from_email']}>"
     msg["To"] = to_email
-    cn = branding.get("company_name", "DroneOps")
+    cn = branding.get("company_name", "Opsdeck")
     msg["Subject"] = f"Your Mission Portal — {cn}"
     msg.attach(MIMEText(html_body, "html"))
 
@@ -414,7 +414,7 @@ async def send_signed_tos_to_both_parties(
     msg["To"] = client_email
     if operator_email and operator_email.lower() != client_email.lower():
         msg["Bcc"] = operator_email
-    cn = branding.get("company_name", "BarnardHQ")
+    cn = branding.get("company_name", "Opsdeck")
     msg["Subject"] = f"Signed Terms of Service — {audit_id} — {cn}"
     msg.attach(MIMEText(html_body, "html"))
 
@@ -422,7 +422,7 @@ async def send_signed_tos_to_both_parties(
     pdf_attachment.add_header(
         "Content-Disposition",
         "attachment",
-        filename=f"BarnardHQ-ToS-{audit_id}.pdf",
+        filename=f"Opsdeck-ToS-{audit_id}.pdf",
     )
     msg.attach(pdf_attachment)
 
@@ -552,7 +552,7 @@ async def send_deposit_received_email(
         # Bcc header is intentionally not added (clients hide it from
         # downstream); pass via the SMTP RCPT TO list below.
         pass
-    cn = branding.get("company_name", "DroneOps")
+    cn = branding.get("company_name", "Opsdeck")
     msg["Subject"] = f"Deposit Received — {cn}"
     msg.attach(MIMEText(html_body, "html"))
 
@@ -646,7 +646,7 @@ async def send_payment_received_email(
     msg = MIMEMultipart()
     msg["From"] = f"{smtp['smtp_from_name']} <{smtp['smtp_from_email']}>"
     msg["To"] = to_email
-    cn = branding.get("company_name", "DroneOps")
+    cn = branding.get("company_name", "Opsdeck")
     msg["Subject"] = f"Payment Received — {cn}"
     msg.attach(MIMEText(html_body, "html"))
 
@@ -710,7 +710,7 @@ async def send_download_link_email(
         else None,
         **branding,
     )
-    cn = branding.get("company_name", "DroneOps")
+    cn = branding.get("company_name", "Opsdeck")
     return await _send_html_email(
         to_email, f"Your Files Are Ready — {mission_title} — {cn}", html, db
     )
@@ -779,4 +779,5 @@ async def send_operator_overdue_email(*, invoice_number, amount_due, customer_na
         f"Customer: {customer_name} ({customer_email or 'NO EMAIL ON FILE'})</p>"
         f"<p><a href=\"{mission_url}\">Open the mission</a></p>"
     )
-    return await _send_html_email("bill@barnardhq.com", f"[OVERDUE] {invoice_number} — ${amount_due:.2f}", html, db)
+    operator_email = settings.smtp_from_email or "ops@opsdeck.local"
+    return await _send_html_email(operator_email, f"[OVERDUE] {invoice_number} — ${amount_due:.2f}", html, db)

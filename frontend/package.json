@@ -1,8 +1,8 @@
 {
-  "name": "doc-frontend",
+  "name": "opsdeck-frontend",
   "private": true,
-  "version": "2.80.1",
-  "description": "Self-hosted drone operations command center — mission management, flight log analysis, GPS flight replay with video export, AI reports, invoicing, and airspace monitoring",
+  "version": "2.81.0",
+  "description": "Opsdeck v2 — mission management, flight log analysis, GPS flight replay with video export, AI reports, invoicing, and airspace monitoring",
   "keywords": [
     "drone",
     "drone-operations",

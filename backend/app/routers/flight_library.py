@@ -377,7 +377,7 @@ async def _check_ingest_anomalies(db: AsyncSession, flight: Flight) -> None:
         # Page operator (ADR-0036/0037 high). Dedup per airframe+local-day so a
         # bulk import of a contaminated set fires once, not once per flight.
         await send_alert(
-            f"[DroneOps] Flight overlap on {flight.drone_serial}",
+            f"[Opsdeck] Flight overlap on {flight.drone_serial}",
             (
                 f"Airframe {flight.drone_serial}: flight '{flight.name}' "
                 f"({iso_utc(new_start)}, {dur:.0f}s) overlaps {len(overlaps)} other "
@@ -1183,10 +1183,10 @@ async def device_health(
     device: DeviceApiKey = Depends(validate_device_api_key),
     db: AsyncSession = Depends(get_db),
 ):
-    """Lightweight connectivity test for DroneOpsSync.
+    """Lightweight connectivity test for Opsdeck Sync.
 
     Returns 200 with device info if the API key is valid and the server is
-    reachable.  DroneOpsSync can hit this endpoint on startup to verify the
+    reachable. Opsdeck Sync can hit this endpoint on startup to verify the
     connection before attempting file uploads.
 
     ADR-0003 — when the device authenticated via the OLD key during a
@@ -1252,7 +1252,7 @@ async def device_upload_flights(
     the gating requirement).
 
     Identical processing to /upload but authenticates via X-Device-Api-Key header
-    instead of a user JWT, allowing automated sync from DroneOpsSync without
+    instead of a user JWT, allowing automated sync from Opsdeck Sync without
     requiring a human login session on the controller.
 
     Emits a single INFO audit log at the end of each call (ADR-0002 §2.4)
@@ -2645,7 +2645,7 @@ def _export_csv(flight: Flight, track: list) -> StreamingResponse:
 def _export_gpx(flight: Flight, track: list) -> StreamingResponse:
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
-        '<gpx version="1.1" creator="DroneOpsCommand">',
+        '<gpx version="1.1" creator="Opsdeck v2">',
         f'  <trk><name>{flight.name}</name><trkseg>',
     ]
     for pt in track:

@@ -7,7 +7,7 @@ for a given coordinate:
 - What airspace class is at the site (controlled B/C/D/E-surface vs
   uncontrolled G)?
 - Is LAANC authorization *likely* required? (controlled ⇒ likely; this is
-  awareness, NOT an authorization — DroneOpsCommand is not an FAA-approved
+  awareness, NOT an authorization — Opsdeck is not an FAA-approved
   USS. The operator still authorizes through Aloft/an approved USS.)
 - Which facility controls the airspace, if resolvable?
 - Are there active TFRs near the site?
@@ -423,7 +423,7 @@ def assemble_preflight(
         "advisories": advisories,
         "degraded": degraded,
         "disclaimer": (
-            "Operator-facing pre-flight awareness only. DroneOpsCommand is not "
+            "Operator-facing pre-flight awareness only. Opsdeck is not "
             "an FAA-approved USS and does not grant authorization. Airspace and "
             "flight legality are the certificated operator's determination."
         ),

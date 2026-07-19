@@ -1,7 +1,7 @@
 """TOS acceptance helper — AcroForm fill + lock + SHA-256 anchor.
 
 Replaces the canvas-signature TOS pattern with a typed-name + checkbox
-flow that fills seven named AcroForm fields on the BarnardHQ Rev 3 ToS
+flow that fills seven named AcroForm fields on the default ToS
 template, locks each filled field read-only (Ff bit 1), and SHA-256
 hashes both the pre-fill template bytes and the post-fill signed bytes
 to anchor the document version and detect tampering.
@@ -34,7 +34,7 @@ from pypdf.generic import BooleanObject, NameObject, NumberObject
 
 logger = logging.getLogger("doc.tos")
 
-# Required AcroForm field names on the BarnardHQ Rev 3 template.
+# Required AcroForm field names on the default ToS template.
 # Order matches the on-page layout (last page of the PDF).
 REQUIRED_FIELDS: tuple[str, ...] = (
     "client_name",
@@ -108,7 +108,7 @@ def template_has_required_fields(pdf_bytes: bytes) -> bool:
     """Return True iff the PDF has all seven required AcroForm fields.
 
     Used by the Settings upload endpoint to reject any PDF that is not
-    the BarnardHQ Rev 3 template (or a derivative carrying the same
+    the default ToS template (or a derivative carrying the same
     field names). Defends against silently configuring a TOS that
     cannot be filled.
     """

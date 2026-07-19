@@ -59,8 +59,8 @@ BRANDING_KEYS = [
 
 # Defaults used when no branding is configured
 BRANDING_DEFAULTS = {
-    "company_name": "DroneOps",
-    "company_tagline": "Professional Aerial Operations",
+    "company_name": "Opsdeck",
+    "company_tagline": "Mission Operations",
     "company_website": "",
     "company_social_url": "",
     "company_contact_email": "",
@@ -332,10 +332,10 @@ async def test_smtp(
     from email.mime.text import MIMEText
 
     try:
-        msg = MIMEText("This is a test email from DroneOpsCommand.")
+        msg = MIMEText("This is a test email from Opsdeck v2.")
         msg["From"] = f"{smtp['smtp_from_name']} <{smtp['smtp_from_email']}>"
         msg["To"] = smtp["smtp_from_email"]
-        msg["Subject"] = "DroneOpsCommand SMTP Test"
+        msg["Subject"] = "Opsdeck v2 SMTP Test"
 
         from app.services.email_service import _parse_bool
         smtp_port = int(smtp["smtp_port"])
@@ -591,12 +591,16 @@ async def test_opensky_credentials(
 LLM_KEYS = [
     "llm_provider",
     "anthropic_api_key",
+    "gemini_api_key",
+    "gemini_model",
 ]
 
 
 class LlmSettings(BaseModel):
     llm_provider: str = "ollama"
     anthropic_api_key: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = ""
 
 
 @router.get("/llm")
@@ -619,13 +623,16 @@ async def get_llm_settings(
     data = {}
     for key in LLM_KEYS:
         data[key] = rows.get(key, "")
-    # Default provider to config value if not set in DB
+    # Default provider/model to config values if not set in DB
     if not data["llm_provider"]:
         data["llm_provider"] = app_settings.llm_provider
-    # Mask API key for frontend display
-    if data.get("anthropic_api_key"):
-        val = data["anthropic_api_key"]
-        data["anthropic_api_key"] = val[:7] + "••••••••" + val[-4:] if len(val) > 11 else "••••••••"
+    if not data["gemini_model"]:
+        data["gemini_model"] = app_settings.gemini_model
+    # Mask API keys for frontend display
+    for key in ("anthropic_api_key", "gemini_api_key"):
+        if data.get(key):
+            val = data[key]
+            data[key] = val[:7] + "••••••••" + val[-4:] if len(val) > 11 else "••••••••"
     return data
 
 
@@ -642,8 +649,8 @@ async def update_llm_settings(
     updates = payload.model_dump()
 
     for key, value in updates.items():
-        # Skip masked API key — don't overwrite with mask
-        if key == "anthropic_api_key" and "••••" in value:
+        # Skip masked API keys — don't overwrite with mask
+        if key in ("anthropic_api_key", "gemini_api_key") and "••••" in value:
             continue
 
         result = await db.execute(
@@ -733,19 +740,34 @@ async def lookup_weather_location(
     payload: dict,
     _user: User = Depends(get_current_user),
 ):
-    """Look up coordinates and nearest airport from a zip code or place name."""
+    """Look up coordinates and nearest airport from a place name or address.
+
+    An optional `country` field (ISO-3166-1 alpha-2, e.g. "za") biases the
+    search to a specific country. Without it the search is worldwide.
+    """
     import httpx
 
     query = payload.get("query", "").strip()
     if not query:
         return {"error": "No query provided"}
 
+    country = payload.get("country", "").strip().lower()
+
     try:
         async with httpx.AsyncClient(timeout=10) as client:
+            params: dict[str, str | int] = {
+                "q": query,
+                "format": "json",
+                "limit": 1,
+                "accept-language": "en-US,en",
+            }
+            if country:
+                params["countrycodes"] = country
+
             resp = await client.get(
                 "https://nominatim.openstreetmap.org/search",
-                params={"q": query, "format": "json", "limit": 1, "countrycodes": "us"},
-                headers={"User-Agent": "DroneOpsCommand/1.0"},
+                params=params,
+                headers={"User-Agent": "Opsdeck/2.0"},
             )
             resp.raise_for_status()
             results = resp.json()
@@ -758,7 +780,9 @@ async def lookup_weather_location(
             parts = display_name.split(",")
             label = ", ".join(p.strip() for p in parts[:2]) if len(parts) >= 2 else display_name
 
-            # Find nearest airport for METAR/TFR/NOTAM data
+            # Find nearest airport for METAR/TFR/NOTAM data. AviationWeather
+            # stationinfo is global for stations it knows; leave empty if
+            # nothing is found so the caller can supply a known ICAO code.
             airport_icao = ""
             try:
                 airport_resp = await client.get(
@@ -780,4 +804,5 @@ async def lookup_weather_location(
                 "airport_icao": airport_icao,
             }
     except Exception as exc:
+        logger.warning("weather/lookup failed for query=%s: %s", query, exc)
         return {"error": str(exc)}

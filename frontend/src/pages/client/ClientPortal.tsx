@@ -7,8 +7,8 @@
  *   3. On invalid: renders the access-denied panel with optional
  *      password-login fallback.
  *
- * Customer-facing — wrapped in <CustomerLayout> with the BarnardHQ
- * brand pass (v2.65.0 — TOS-PDF cyan #189cc6, Bebas Neue display,
+ * Customer-facing — wrapped in <CustomerLayout> with the Opsdeck
+ * brand pass (TOS-PDF cyan #189cc6, Bebas Neue display,
  * Share Tech Mono mono).
  */
 import { useEffect, useState } from 'react';

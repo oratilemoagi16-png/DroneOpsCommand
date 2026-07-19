@@ -2,7 +2,86 @@
 
 # Changelog
 
-Notable changes to DroneOpsCommand. Dates are absolute (YYYY-MM-DD, UTC).
+Notable changes to Opsdeck v2. Dates are absolute (YYYY-MM-DD, UTC).
+
+## 2026-07-19 — fixes: international weather, invoice recalc & PDF — v2.81.0
+
+South-Africa/international support and invoicing hardening based on end-to-end
+VPS testing.
+
+* `GET /api/weather/current` now accepts optional `lat`, `lon`, `airport`, and
+  `label` query parameters for one-off site weather checks (e.g. missions in
+  South Africa). Defaults remain the configured Settings location.
+* `POST /api/settings/weather/lookup` is no longer hard-coded to `countrycodes=us`;
+  it now searches worldwide and accepts an optional `country` (ISO alpha-2,
+  e.g. `za`) for country-biased results.
+* Open-Meteo timezone switched from `America/Los_Angeles` to `auto` so
+  international forecasts display the correct local time.
+* Fixed invoice total recalculation after adding, replacing, updating, or deleting
+  line items. Totals and deposit amounts are now correct immediately.
+* Added `POST /api/missions/{mission_id}/invoice/pdf` to generate a branded PDF
+  invoice for a mission using a dedicated `invoice_pdf.html` template.
+
+## 2026-07-19 — feat(auth): public sign-up — v2.80.5
+
+Add a public user registration flow, gated by an opt-in env flag.
+
+* New `POST /api/auth/register` endpoint creates a user account and returns
+  access/refresh tokens. Disabled by default; enable with
+  `PUBLIC_REGISTRATION_ENABLED=true`.
+* Password complexity, uniqueness, and confirm-password checks reuse the
+  existing bcrypt/auth machinery.
+* New frontend `SignUp.tsx` page with live password-rule feedback and a
+  link back to login.
+* `Login.tsx` now links to `/signup` when registration is enabled.
+* `useAuth` hook exposes `register()` and `App.tsx` routes `/signup`.
+
+## 2026-07-19 — rebrand: Opsdeck v2 — v2.80.4
+
+Rebrand the application to **Opsdeck v2** across user-visible surfaces and
+remove GitHub/open-source references.
+
+* App title, FastAPI metadata, health endpoint, and PWA manifest updated to
+  "Opsdeck v2".
+* Default company name and tagline changed to "Opsdeck" / "Mission Operations".
+* New generated logo assets (`logo.png`, `logo-full.png`, PWA icons) replace
+  the previous DroneOps/D.O.C branding.
+* Removed GitHub footer links, "Deploy Your Own" CTAs, and author/website
+  links from the login, setup, and app-shell UI.
+* Customer-facing email templates and transactional email subjects updated
+  to use the Opsdeck brand.
+* README rewritten to reflect the Opsdeck v2 identity and stripped of GitHub
+  clone URLs, live demo links, and "open-source" language.
+
+## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.3
+
+Adds Gemini as a third LLM provider for mission report generation, alongside
+Claude and Ollama. Default model updated to `gemini-3.5-flash` and API-key
+logging hardened.
+
+* New backend service `app/services/gemini_llm.py` calls the Gemini
+  `generateContent` REST endpoint via the existing `httpx` client; the API key
+  in the query string is never logged.
+* Dispatcher, status endpoint, and settings schema updated to recognize
+  `gemini` as a valid `llm_provider` value.
+* Settings page (`AiTab.tsx`) exposes provider selection, API key, and model
+  inputs for Gemini; default model is `gemini-3.5-flash`.
+* New env vars: `LLM_PROVIDER`, `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`,
+  `GEMINI_API_KEY`, and `GEMINI_MODEL`; propagated to backend and worker in
+  `docker-compose.yml`.
+
+## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.2
+
+Adds Gemini as a third LLM provider for mission report generation, alongside
+Claude and Ollama.
+
+* New backend service `app/services/gemini_llm.py` calls the Gemini
+  `generateContent` REST endpoint via the existing `httpx` client.
+* Dispatcher, status endpoint, and settings schema updated to recognize
+  `gemini` as a valid `llm_provider` value.
+* Settings page (`AiTab.tsx`) now exposes provider selection, API key, and
+  model inputs for Gemini.
+* New env vars: `GEMINI_API_KEY` and `GEMINI_MODEL` (default `gemini-1.5-pro`).
 
 ## 2026-07-16 — ops(backups): off-host R2 push + fix broken tos_signed path + freshness metric [skip-deploy]
 

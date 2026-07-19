@@ -1,18 +1,26 @@
+import asyncio
 import logging
+import os
 from datetime import datetime
+from functools import partial
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import FileResponse
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
+from weasyprint import HTML
 
 from app.auth.jwt import get_current_user
+from app.config import settings
 from app.database import get_db
 from app.models.invoice import Invoice, LineItem
 from app.models.mission import Mission
 from app.models.system_settings import SystemSetting
 from app.models.user import User
+from app.routers.system_settings import get_branding
+from app.services.pdf_generator import _safe_url_fetcher, jinja_env
 from app.schemas.invoice import (
     InvoiceCreate,
     InvoiceResponse,
@@ -28,7 +36,7 @@ router = APIRouter(prefix="/api/missions", tags=["invoices"])
 
 
 # ADR-0011 §2 (v2.66.0) — sequential invoice numbering.
-# Format: BARNARDHQ-YYYY-NNNN, 4-digit zero-padded counter, year prefix
+# Format: OPSDECK-YYYY-NNNN, 4-digit zero-padded counter, year prefix
 # resets every Jan 1. Counter row keys per year so a reset is just a new
 # row coming online; old years' counters persist for audit. The counter
 # itself is held atomically inside a single UPDATE …  RETURNING (PG
@@ -42,7 +50,7 @@ _INVOICE_COUNTER_KEY_PREFIX = "invoice_number_counter_"
 async def _next_invoice_number(db: AsyncSession) -> str:
     """Atomic next sequence number per year.
 
-    Returns a string like `BARNARDHQ-2026-0001`. Safe under
+    Returns a string like `OPSDECK-2026-0001`. Safe under
     concurrency because the UPDATE RETURNING is one PG statement.
     First-use auto-creates the row at 1.
     """
@@ -65,7 +73,7 @@ async def _next_invoice_number(db: AsyncSession) -> str:
     result = await db.execute(sql, {"k": key})
     row = result.fetchone()
     next_int = int(row[0])
-    formatted = f"BARNARDHQ-{year}-{next_int:04d}"
+    formatted = f"OPSDECK-{year}-{next_int:04d}"
     logger.info(
         "[INVOICE-NUMBER] Allocated %s (counter=%s)", formatted, key,
     )
@@ -338,28 +346,22 @@ async def replace_line_items(
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
 
-    for li in list(invoice.line_items):
-        await db.delete(li)
+    invoice.line_items.clear()
     await db.flush()
 
     for i, item in enumerate(data):
-        db.add(LineItem(
-            invoice_id=invoice.id,
+        new_item = LineItem(
+            invoice=invoice,
             description=item.description,
             category=item.category,
             quantity=item.quantity,
             unit_price=item.unit_price,
             total=float(item.quantity) * float(item.unit_price),
             sort_order=i,
-        ))
+        )
+        db.add(new_item)
     await db.flush()
 
-    result2 = await db.execute(
-        select(Invoice)
-        .where(Invoice.id == invoice.id)
-        .options(selectinload(Invoice.line_items))
-    )
-    invoice = result2.scalar_one()
     _recalculate_invoice(invoice)
     await db.flush()
     await db.refresh(invoice)
@@ -387,7 +389,7 @@ async def add_line_item(
         raise HTTPException(status_code=404, detail="Invoice not found")
 
     item = LineItem(
-        invoice_id=invoice.id,
+        invoice=invoice,
         description=data.description,
         category=data.category,
         quantity=data.quantity,
@@ -398,13 +400,8 @@ async def add_line_item(
     db.add(item)
     await db.flush()
 
-    # Recalculate totals — re-query to include new item
-    result = await db.execute(
-        select(Invoice)
-        .where(Invoice.id == invoice.id)
-        .options(selectinload(Invoice.line_items))
-    )
-    invoice = result.scalar_one()
+    # Recalculate totals — the new item is already in the invoice's
+    # line_items collection via the bidirectional relationship.
     _recalculate_invoice(invoice)
     await db.flush()
     await db.refresh(item)
@@ -419,7 +416,11 @@ async def update_line_item(
     db: AsyncSession = Depends(get_db),
     _user: User = Depends(get_current_user),
 ):
-    result = await db.execute(select(LineItem).where(LineItem.id == item_id))
+    result = await db.execute(
+        select(LineItem)
+        .where(LineItem.id == item_id)
+        .options(selectinload(LineItem.invoice))
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise HTTPException(status_code=404, detail="Line item not found")
@@ -430,14 +431,10 @@ async def update_line_item(
     item.total = float(item.quantity) * float(item.unit_price)
     await db.flush()
 
-    # Recalculate invoice totals with eager loaded line_items
-    invoice_result = await db.execute(
-        select(Invoice)
-        .where(Invoice.mission_id == mission_id)
-        .options(selectinload(Invoice.line_items))
-    )
-    invoice = invoice_result.scalar_one_or_none()
+    # Recalculate invoice totals with the item's parent invoice.
+    invoice = item.invoice
     if invoice:
+        await db.refresh(invoice, attribute_names=["line_items"])
         _recalculate_invoice(invoice)
         await db.flush()
 
@@ -452,22 +449,124 @@ async def delete_line_item(
     db: AsyncSession = Depends(get_db),
     _user: User = Depends(get_current_user),
 ):
-    result = await db.execute(select(LineItem).where(LineItem.id == item_id))
+    result = await db.execute(
+        select(LineItem)
+        .where(LineItem.id == item_id)
+        .options(selectinload(LineItem.invoice))
+    )
     item = result.scalar_one_or_none()
     if not item:
         raise HTTPException(status_code=404, detail="Line item not found")
 
-    invoice_id = item.invoice_id
+    invoice = item.invoice
     await db.delete(item)
     await db.flush()
 
-    # Recalculate invoice totals with eager loaded line_items
-    invoice_result = await db.execute(
-        select(Invoice)
-        .where(Invoice.id == invoice_id)
-        .options(selectinload(Invoice.line_items))
-    )
-    invoice = invoice_result.scalar_one_or_none()
+    # Recalculate invoice totals with the parent invoice's refreshed line items.
     if invoice:
+        await db.refresh(invoice, attribute_names=["line_items"])
         _recalculate_invoice(invoice)
         await db.flush()
+
+
+@router.post("/{mission_id}/invoice/pdf")
+async def generate_invoice_pdf(
+    mission_id: UUID,
+    db: AsyncSession = Depends(get_db),
+    _user: User = Depends(get_current_user),
+):
+    """Generate a PDF invoice for the mission."""
+    result = await db.execute(
+        select(Mission)
+        .where(Mission.id == mission_id)
+        .options(
+            selectinload(Mission.customer),
+            selectinload(Mission.invoice).selectinload(Invoice.line_items),
+        )
+    )
+    mission = result.scalar_one_or_none()
+    if not mission:
+        raise HTTPException(status_code=404, detail="Mission not found")
+
+    invoice = mission.invoice
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found for this mission")
+
+    if invoice.total <= 0:
+        raise HTTPException(status_code=400, detail="Invoice has no total; add line items first")
+
+    customer = mission.customer
+    customer_dict = {
+        "name": customer.name if customer else "",
+        "company": customer.company if customer else "",
+        "email": customer.email if customer else "",
+    }
+
+    invoice_dict = {
+        "invoice_number": invoice.invoice_number,
+        "created_at": invoice.created_at.isoformat() if invoice.created_at else "",
+        "subtotal": float(invoice.subtotal),
+        "tax_rate": float(invoice.tax_rate),
+        "tax_amount": float(invoice.tax_amount),
+        "total": float(invoice.total),
+        "deposit_required": invoice.deposit_required,
+        "deposit_amount": float(invoice.deposit_amount or 0),
+        "notes": invoice.notes,
+        "line_items": [
+            {
+                "description": li.description,
+                "category": li.category.value,
+                "quantity": float(li.quantity),
+                "unit_price": float(li.unit_price),
+                "total": float(li.total),
+            }
+            for li in invoice.line_items
+        ],
+    }
+
+    mission_dict = {
+        "id": str(mission.id),
+        "title": mission.title,
+    }
+
+    branding = await get_branding(db)
+    # Resolve logo path for the template
+    company_logo = branding.get("company_logo", "")
+    upload_dir = settings.upload_dir
+
+    template = jinja_env.get_template("invoice_pdf.html")
+    html_content = template.render(
+        company_name=branding.get("company_name"),
+        company_tagline=branding.get("company_tagline"),
+        company_contact_email=branding.get("company_contact_email"),
+        brand_primary_color=branding.get("brand_primary_color"),
+        brand_accent_color=branding.get("brand_accent_color"),
+        company_logo=company_logo,
+        upload_dir=upload_dir,
+        invoice=invoice_dict,
+        mission=mission_dict,
+        customer=customer_dict,
+        generated_at=datetime.utcnow().isoformat(),
+    )
+
+    output_dir = settings.upload_dir
+    os.makedirs(output_dir, exist_ok=True)
+    pdf_filename = f"invoice_{invoice.id}.pdf"
+    pdf_path = os.path.join(output_dir, pdf_filename)
+
+    loop = asyncio.get_running_loop()
+    try:
+        await loop.run_in_executor(
+            None,
+            partial(
+                lambda html, path: HTML(string=html, url_fetcher=_safe_url_fetcher).write_pdf(path),
+                html_content,
+                pdf_path,
+            ),
+        )
+    except Exception as exc:
+        logger.error("Invoice PDF generation failed for mission %s: %s", mission_id, exc, exc_info=True)
+        raise HTTPException(status_code=500, detail=f"PDF generation failed: {exc}")
+
+    logger.info("Invoice PDF generated for mission %s: %s", mission_id, pdf_path)
+    return FileResponse(pdf_path, media_type="application/pdf", filename=f"invoice_{invoice.invoice_number or mission.title}.pdf")

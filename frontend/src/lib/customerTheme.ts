@@ -1,11 +1,9 @@
 /**
  * Customer-facing brand tokens.
  *
- * Lifted directly from the BarnardHQ LLC Terms of Service PDF
- * (`/data/uploads/tos/default_tos.pdf`, Rev 3) so every customer-
- * facing surface — `/client/*` portal pages, the `/tos/accept`
- * acceptance page, and the five customer transactional emails —
- * reads as one continuous BarnardHQ artifact.
+ * Used by `/client/*` portal pages, the `/tos/accept`
+ * acceptance page, and the customer transactional emails so every
+ * customer-facing surface reads as one continuous Opsdeck artifact.
  *
  * Operator-side surfaces (`MissionDetail`, `Dashboard`, etc.)
  * intentionally keep the existing operator-cyan `#00d4ff`. Do NOT
@@ -68,7 +66,7 @@ export const customerBrand = {
  * templates' shared snippet.
  */
 export const FOOTER_LINE =
-  'BarnardHQ LLC · Eugene, Oregon · FAA Part 107 Certified · barnardhq.com · DOC-001';
+  'Opsdeck · Mission Operations · FAA Part 107 Certified';
 
 /** Convenience composed style objects so pages don't repeat themselves. */
 export const customerStyles = {

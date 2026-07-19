@@ -2,7 +2,7 @@
 
 Two customer touches per unpaid invoice:
   - +48h  -> gentle reminder email
-  - +7d   -> firmer final-notice email + operator overdue email to bill@
+  - +7d   -> firmer final-notice email + operator overdue email
 
 Core decision logic (`due_stage`, `process_invoice`) is pure and hermetically
 tested. `run_dunning_sweep` is the async orchestration run by the daily Celery
@@ -14,11 +14,13 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timedelta
 
+from app.config import settings
+
 logger = logging.getLogger("doc.dunning")
 
 REMINDER_AFTER = timedelta(hours=48)
 FINAL_AFTER = timedelta(days=7)
-OPERATOR_ALERT_EMAIL = "bill@barnardhq.com"
+OPERATOR_ALERT_EMAIL = settings.smtp_from_email or ""
 
 STAGE_REMINDER = "reminder"
 STAGE_FINAL = "final"

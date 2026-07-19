@@ -13,8 +13,8 @@ export interface Branding {
 }
 
 const DEFAULTS: Branding = {
-  company_name: 'DroneOps',
-  company_tagline: 'Professional Aerial Operations',
+  company_name: 'Opsdeck',
+  company_tagline: 'Mission Operations',
   company_website: '',
   company_social_url: '',
   company_contact_email: '',

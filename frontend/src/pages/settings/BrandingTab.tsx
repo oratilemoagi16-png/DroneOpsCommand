@@ -142,7 +142,7 @@ export default function BrandingTab() {
             />
             <TextInput
               label="Tagline"
-              placeholder="Professional Aerial Operations"
+              placeholder="Mission Operations"
               {...brandingForm.getInputProps('company_tagline')}
               styles={inputStyles}
             />

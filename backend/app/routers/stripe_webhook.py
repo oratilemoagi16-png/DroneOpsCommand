@@ -26,6 +26,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.config import settings
 from app.database import get_db
 from app.models.invoice import Invoice
 from app.services.stripe_service import get_stripe_settings, _stripe_call, stripe_client
@@ -43,7 +44,7 @@ _NTFY_TOPIC_DEPOSITS = "droneops-deposits"
 
 # Per ADR-0009 §3.5, BCC the operator on every customer receipt so they
 # get a confirmation copy without needing to log into the portal.
-_OPERATOR_RECEIPT_BCC = "me@barnardhq.com"
+_OPERATOR_RECEIPT_BCC = settings.smtp_from_email or ""
 
 
 @router.post("/api/webhooks/stripe")
@@ -345,7 +346,7 @@ async def _send_deposit_notifications(invoice: Invoice, db: AsyncSession):
         from app.services.ntfy import send_alert
         click_url = f"{_frontend_origin()}/missions/{invoice.mission_id}"
         await send_alert(
-            title=f"[DroneOps Command] Deposit received — '{mission.title}' — ${deposit_amount:,.2f}",
+            title=f"[Opsdeck] Deposit received — '{mission.title}' — ${deposit_amount:,.2f}",
             message=f"Customer paid the deposit for mission '{mission.title}'. Balance still owed: ${invoice.balance_amount:,.2f}.",
             priority=1,  # ntfy "high" — operator visibility, not crash-the-pager
             topic=_NTFY_TOPIC_DEPOSITS,
@@ -397,7 +398,7 @@ async def _send_balance_notifications(invoice: Invoice, db: AsyncSession):
         from app.services.ntfy import send_alert
         click_url = f"{_frontend_origin()}/missions/{invoice.mission_id}"
         await send_alert(
-            title=f"[DroneOps Command] Balance paid — '{mission.title}' — ${paid_amount:,.2f}",
+            title=f"[Opsdeck] Balance paid — '{mission.title}' — ${paid_amount:,.2f}",
             message=f"Mission '{mission.title}' is paid in full (${float(invoice.total):,.2f}).",
             priority=1,
             topic=_NTFY_TOPIC_DEPOSITS,
@@ -437,8 +438,8 @@ async def _send_balance_notifications(invoice: Invoice, db: AsyncSession):
 
 
 def _frontend_origin() -> str:
-    """Read the operator-side frontend URL once. Defaults to production
-    droneops origin so click URLs always point somewhere sane even if
+    """Read the operator-side frontend URL once. Defaults to a placeholder
+    origin so click URLs always point somewhere sane even if
     config drifts."""
     from app.config import settings as _settings
-    return (_settings.frontend_url or "https://droneops.barnardhq.com").rstrip("/")
+    return (_settings.frontend_url or "https://opsdeck.local").rstrip("/")

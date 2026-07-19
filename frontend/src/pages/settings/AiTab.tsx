@@ -9,6 +9,7 @@ import {
   Select,
   Stack,
   Text,
+  TextInput,
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -27,7 +28,7 @@ export default function AiTab() {
   const [llmSaving, setLlmSaving] = useState(false);
 
   const llmForm = useForm({
-    initialValues: { llm_provider: 'ollama', anthropic_api_key: '' },
+    initialValues: { llm_provider: 'ollama', anthropic_api_key: '', gemini_api_key: '', gemini_model: 'gemini-3.5-flash' },
   });
 
   useEffect(() => {
@@ -70,6 +71,7 @@ export default function AiTab() {
               label="LLM Provider"
               data={[
                 { value: 'claude', label: 'Claude API (Anthropic)' },
+                { value: 'gemini', label: 'Gemini API (Google)' },
                 { value: 'ollama', label: 'Ollama (Local)' },
               ]}
               {...llmForm.getInputProps('llm_provider')}
@@ -82,6 +84,22 @@ export default function AiTab() {
                 {...llmForm.getInputProps('anthropic_api_key')}
                 styles={inputStyles}
               />
+            )}
+            {llmForm.values.llm_provider === 'gemini' && (
+              <>
+                <PasswordInput
+                  label="Gemini API Key"
+                  placeholder="AI..."
+                  {...llmForm.getInputProps('gemini_api_key')}
+                  styles={inputStyles}
+                />
+                <TextInput
+                  label="Gemini Model"
+                  placeholder="gemini-3.5-flash"
+                  {...llmForm.getInputProps('gemini_model')}
+                  styles={inputStyles}
+                />
+              </>
             )}
             <Button type="submit" color="cyan" loading={llmSaving} styles={{ root: { fontFamily: "'Bebas Neue', sans-serif" } }}>
               SAVE LLM SETTINGS
@@ -100,7 +118,11 @@ export default function AiTab() {
             <Group>
               <Text c="#5a6478" style={{ fontFamily: "'Share Tech Mono', monospace" }}>PROVIDER:</Text>
               <Badge color="cyan" variant="light">
-                {(llmStatus as any)?.provider === 'claude' ? 'Claude API' : 'Ollama'}
+                {(llmStatus as any)?.provider === 'claude'
+                  ? 'Claude API'
+                  : (llmStatus as any)?.provider === 'gemini'
+                    ? 'Gemini API'
+                    : 'Ollama'}
               </Badge>
             </Group>
             <Group>

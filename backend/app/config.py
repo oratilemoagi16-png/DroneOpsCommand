@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -21,7 +22,11 @@ class Settings(BaseSettings):
     # surfaces in the UI as a generic "report failed" toast.
     claude_model: str = "claude-sonnet-4-6"
 
-    # LLM provider selection: "ollama" or "claude"
+    # Gemini (Google)
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-3.5-flash"
+
+    # LLM provider selection: "ollama", "claude", or "gemini"
     llm_provider: str = "ollama"
 
     # OpenDroneLog
@@ -68,7 +73,7 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_publishable_key: str = ""
 
-    # Managed instance (hosted by BarnardHQ)
+    # Managed instance (hosted by the operator or a managed provider)
     managed_instance: bool = False
     client_id: str = ""
 
@@ -80,10 +85,13 @@ class Settings(BaseSettings):
     demo_mode: bool = False
     demo_reset_interval_hours: int = 24
 
+    # Public user registration
+    public_registration_enabled: bool = Field(default=False, validation_alias="PUBLIC_REGISTRATION_ENABLED")
+
     # ntfy (ADR-0036 — replaces Pushover transport for ADR-0002 §5
     # silent-drift watchdog + ADR-0003 zero-touch key rotation alerts).
     # Optional: if the publisher token is set, alerts publish to the
-    # self-hosted ntfy at ntfy.barnardhq.com (with publisher-side
+    # private ntfy instance at ntfy.barnardhq.com (with publisher-side
     # fallback to ntfy.sh on a per-service obscured topic). Unset =
     # no-op (watchdog still logs to structured JSON, alerts just
     # don't go out). Watchdog contract from ADR-0002 §5 + ADR-0003 is

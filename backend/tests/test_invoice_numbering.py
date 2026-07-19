@@ -1,6 +1,6 @@
 """ADR-0011 §2 v2.66.0 — sequential invoice numbering.
 
-`_next_invoice_number(db)` issues a `BARNARDHQ-YYYY-NNNN` string
+`_next_invoice_number(db)` issues a `OPSDECK-YYYY-NNNN` string
 backed by an atomic UPSERT on `system_settings.value`. Year prefix
 resets every Jan 1 by virtue of using a per-year counter key.
 
@@ -48,9 +48,9 @@ async def test_next_invoice_number_format_4_digit_zero_padded():
     db = _SeqDB(returning_values=[1])
     number = await _next_invoice_number(db)
 
-    # Format: BARNARDHQ-YYYY-NNNN
+    # Format: OPSDECK-YYYY-NNNN
     parts = number.split("-")
-    assert parts[0] == "BARNARDHQ"
+    assert parts[0] == "OPSDECK"
     assert parts[1].isdigit() and len(parts[1]) == 4
     assert parts[2] == "0001"
 

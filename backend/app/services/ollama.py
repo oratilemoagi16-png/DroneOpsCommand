@@ -95,7 +95,7 @@ async def generate_report(
     total_duration_seconds: float = 0,
     total_distance_meters: float = 0,
     mission_date: str | None = None,
-    company_name: str = "DroneOps",
+    company_name: str = "Opsdeck",
 ) -> str:
     """Generate a report narrative using Ollama."""
 

@@ -586,7 +586,7 @@ async def generate_report(
         total_duration=total_duration,
         total_distance=total_distance,
         map_path=map_path,
-        company_name=_brand.get("company_name", "DroneOps"),
+        company_name=_brand.get("company_name", "Opsdeck"),
     )
 
     elapsed = time.perf_counter() - start

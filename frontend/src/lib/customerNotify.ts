@@ -5,7 +5,7 @@
  * notification kinds — payment confirmed (success), still-processing
  * (warning), payment error (danger) — and the JWT-token-validation
  * page in `ClientPortal` fires "Access Denied". All of them now go
- * through these helpers so the styling matches the BarnardHQ brand
+ * through these helpers so the styling matches the Opsdeck brand
  * (Bebas Neue title, brand cyan/green/red accents, navy borders) and
  * does not look like a stock Mantine toast.
  *

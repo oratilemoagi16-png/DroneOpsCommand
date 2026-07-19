@@ -158,6 +158,11 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b-instruct-q4_K_M}
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-6}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.5-flash}
       - OPENDRONELOG_URL=${OPENDRONELOG_URL:-}
       # ADR-0012: required, no default. JWT signing key cannot fall back to a literal.
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:?JWT_SECRET_KEY must be set in .env (no default — see ADR-0012)}
@@ -166,6 +171,7 @@ services:
       - JWT_REFRESH_TOKEN_EXPIRE_DAYS=${JWT_REFRESH_TOKEN_EXPIRE_DAYS:-30}
       - DEMO_ADMIN_USERNAME=${DEMO_ADMIN_USERNAME:-}
       - DEMO_ADMIN_PASSWORD=${DEMO_ADMIN_PASSWORD:-}
+      - PUBLIC_REGISTRATION_ENABLED=${PUBLIC_REGISTRATION_ENABLED:-false}
       - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
@@ -184,7 +190,7 @@ services:
       - OTEL_SERVICE_NAME=droneops-api
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.5}
       # ADR-0002 §5 + ADR-0003 alerts via ntfy (ADR-0036).
       # Unset = no-op (structured JSON logs still emit).
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}
@@ -268,6 +274,11 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
       - OLLAMA_MODEL=${OLLAMA_MODEL:-llama3.1:8b-instruct-q4_K_M}
+      - LLM_PROVIDER=${LLM_PROVIDER:-ollama}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - CLAUDE_MODEL=${CLAUDE_MODEL:-claude-sonnet-4-6}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - GEMINI_MODEL=${GEMINI_MODEL:-gemini-3.5-flash}
       - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_USER=${SMTP_USER:-}
@@ -285,7 +296,7 @@ services:
       - OTEL_SERVICE_NAME=droneops-worker
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.5}
       # ADR-0002 §5 + ADR-0003 alerts from silence watchdog task via
       # ntfy (ADR-0036).
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}
@@ -324,7 +335,7 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.5}
       # ADR-0036 — beat scheduler enqueues silence watchdog and rotation
       # finalizer; the watchdog task itself emits the alert via ntfy.
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}

@@ -172,7 +172,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 style={{ fontFamily: "'Share Tech Mono', monospace" }}
               >
                 {isStale
-                  ? 'A new version of D.O.C was deployed. Reload to pick it up — your work isn\'t lost.'
+                  ? 'A new version of Opsdeck v2 was deployed. Reload to pick it up — your work isn\'t lost.'
                   : 'An unexpected error occurred. Try refreshing the page or navigating back.'}
               </Text>
               {!isStale && this.state.errorMessage && (

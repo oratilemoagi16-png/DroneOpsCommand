@@ -17,7 +17,7 @@ import { DeviceKey } from '../../api/types';
 import { inputStyles, cardStyle } from '../../components/shared/styles';
 
 /**
- * DEVICE ACCESS tab — DroneOpsSync API keys. Fetches /settings/device-keys on
+ * DEVICE ACCESS tab — Opsdeck Sync API keys. Fetches /settings/device-keys on
  * mount. Create/revoke flows and the once-shown raw key UX are unchanged.
  */
 export default function DevicesTab() {
@@ -50,10 +50,10 @@ export default function DevicesTab() {
       <Card padding="lg" radius="md" style={cardStyle}>
         <Group gap="sm" mb="md">
           <IconKey size={20} color="#00d4ff" />
-          <Title order={3} c="#e8edf2" style={{ letterSpacing: '1px' }}>DRONEOPSSYNC API KEYS</Title>
+          <Title order={3} c="#e8edf2" style={{ letterSpacing: '1px' }}>OPSDECK SYNC API KEYS</Title>
         </Group>
         <Text c="#5a6478" size="xs" mb="md" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
-          Generate API keys for DroneOpsSync field controllers to upload flight logs without a user login.
+          Generate API keys for Opsdeck Sync field controllers to upload flight logs without a user login.
           Keys are shown once at creation — copy immediately to your device.
         </Text>
 
@@ -184,7 +184,7 @@ export default function DevicesTab() {
           </Table>
         ) : (
           <Text c="#5a6478" size="sm" ta="center" py="md" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
-            No device keys yet. Generate one to connect DroneOpsSync.
+            No device keys yet. Generate one to connect Opsdeck Sync.
           </Text>
         )}
       </Card>
@@ -192,10 +192,10 @@ export default function DevicesTab() {
       <Card padding="lg" radius="md" style={cardStyle}>
         <Group gap="sm" mb="md">
           <IconDrone size={20} color="#00d4ff" />
-          <Title order={3} c="#e8edf2" style={{ letterSpacing: '1px' }}>DRONEOPSSYNC SETUP</Title>
+          <Title order={3} c="#e8edf2" style={{ letterSpacing: '1px' }}>OPSDECK SYNC SETUP</Title>
         </Group>
         <Text c="#5a6478" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
-          On your Android device, configure DroneOpsSync with:
+          On your Android device, configure Opsdeck Sync with:
         </Text>
         <Stack gap={4} mt="sm">
           <Text c="#e8edf2" size="sm" style={{ fontFamily: "'Share Tech Mono', monospace" }}>

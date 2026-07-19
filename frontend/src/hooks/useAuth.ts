@@ -51,6 +51,13 @@ export function useAuth() {
     setIsAuthenticated(true);
   }, []);
 
+  const register = useCallback(async (username: string, password: string, confirmPassword: string) => {
+    const resp = await api.post('/auth/register', { username, password, confirm_password: confirmPassword });
+    localStorage.setItem('access_token', resp.data.access_token);
+    localStorage.setItem('refresh_token', resp.data.refresh_token);
+    setIsAuthenticated(true);
+  }, []);
+
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
@@ -64,5 +71,5 @@ export function useAuth() {
     setIsAuthenticated(true);
   }, []);
 
-  return { isAuthenticated, needsSetup, loading, login, logout, completeSetup };
+  return { isAuthenticated, needsSetup, loading, login, register, logout, completeSetup };
 }

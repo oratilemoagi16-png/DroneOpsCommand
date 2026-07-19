@@ -1,8 +1,8 @@
 /**
  * Client portal — email/password login.
  *
- * Customer-facing — wrapped in <CustomerLayout> with the BarnardHQ
- * brand pass (v2.65.0).
+ * Customer-facing — wrapped in <CustomerLayout> with the Opsdeck
+ * brand pass.
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
