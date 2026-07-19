@@ -6,7 +6,7 @@ import re
 from datetime import datetime
 
 import httpx
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -91,8 +91,16 @@ FLIGHT_CAT_INFO = {
 async def get_weather_and_airspace(
     _user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
+    lat: float | None = Query(None, ge=-90, le=90, description="Optional latitude override"),
+    lon: float | None = Query(None, ge=-180, le=180, description="Optional longitude override"),
+    airport: str | None = Query(None, description="Optional ICAO airport override (e.g. FACT)"),
+    label: str | None = Query(None, description="Optional location label override"),
 ):
-    """Fetch current weather (Open-Meteo + METAR) and FAA data for configured location.
+    """Fetch current weather (Open-Meteo + METAR) and FAA data.
+
+    By default uses the location saved in Settings. Any of lat, lon,
+    airport, or label may be supplied as query parameters for a one-off
+    site check (e.g. a mission in South Africa).
 
     Performance:
     - The 5 upstream fetches (Open-Meteo, AviationWeather METAR/TFR/NOTAM,
@@ -102,7 +110,11 @@ async def get_weather_and_airspace(
       same-location concurrent viewers all share one upstream fan-out.
     - Failure-open: Redis down ⇒ live fetch (slow but correct).
     """
-    lat, lon, label, airport = await _load_weather_location(db)
+    cfg_lat, cfg_lon, cfg_label, cfg_airport = await _load_weather_location(db)
+    lat = lat if lat is not None else cfg_lat
+    lon = lon if lon is not None else cfg_lon
+    label = label or cfg_label
+    airport = (airport or cfg_airport).upper() if (airport or cfg_airport) else ""
     cache_key = f"doc:weather:current:{lat:.4f}:{lon:.4f}:{airport}"
 
     async def _build() -> dict:
@@ -147,7 +159,7 @@ async def _fetch_weather(lat: float, lon: float) -> dict:
         "cloud_cover,visibility,pressure_msl"
         "&temperature_unit=fahrenheit"
         "&wind_speed_unit=mph"
-        "&timezone=America/Los_Angeles"
+        "&timezone=auto"
     )
     try:
         async with httpx.AsyncClient(timeout=10) as client:

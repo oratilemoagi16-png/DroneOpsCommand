@@ -4,6 +4,24 @@
 
 Notable changes to Opsdeck v2. Dates are absolute (YYYY-MM-DD, UTC).
 
+## 2026-07-19 — fixes: international weather, invoice recalc & PDF — v2.81.0
+
+South-Africa/international support and invoicing hardening based on end-to-end
+VPS testing.
+
+* `GET /api/weather/current` now accepts optional `lat`, `lon`, `airport`, and
+  `label` query parameters for one-off site weather checks (e.g. missions in
+  South Africa). Defaults remain the configured Settings location.
+* `POST /api/settings/weather/lookup` is no longer hard-coded to `countrycodes=us`;
+  it now searches worldwide and accepts an optional `country` (ISO alpha-2,
+  e.g. `za`) for country-biased results.
+* Open-Meteo timezone switched from `America/Los_Angeles` to `auto` so
+  international forecasts display the correct local time.
+* Fixed invoice total recalculation after adding, replacing, updating, or deleting
+  line items. Totals and deposit amounts are now correct immediately.
+* Added `POST /api/missions/{mission_id}/invoice/pdf` to generate a branded PDF
+  invoice for a mission using a dedicated `invoice_pdf.html` template.
+
 ## 2026-07-19 — feat(auth): public sign-up — v2.80.5
 
 Add a public user registration flow, gated by an opt-in env flag.

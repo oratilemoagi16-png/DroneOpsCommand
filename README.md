@@ -2,7 +2,7 @@
 
 **Mission management, flight log analysis, GPS flight replay with video export, AI report generation, invoicing, and real-time airspace monitoring for commercial drone operators.**
 
-**Version 2.80.5** | [Quick Start](#quick-start) | [Features](#features) | [Configuration](#configuration)
+**Version 2.81.0** | [Quick Start](#quick-start) | [Features](#features) | [Configuration](#configuration)
 
 ---
 

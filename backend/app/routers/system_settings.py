@@ -740,18 +740,33 @@ async def lookup_weather_location(
     payload: dict,
     _user: User = Depends(get_current_user),
 ):
-    """Look up coordinates and nearest airport from a zip code or place name."""
+    """Look up coordinates and nearest airport from a place name or address.
+
+    An optional `country` field (ISO-3166-1 alpha-2, e.g. "za") biases the
+    search to a specific country. Without it the search is worldwide.
+    """
     import httpx
 
     query = payload.get("query", "").strip()
     if not query:
         return {"error": "No query provided"}
 
+    country = payload.get("country", "").strip().lower()
+
     try:
         async with httpx.AsyncClient(timeout=10) as client:
+            params: dict[str, str | int] = {
+                "q": query,
+                "format": "json",
+                "limit": 1,
+                "accept-language": "en-US,en",
+            }
+            if country:
+                params["countrycodes"] = country
+
             resp = await client.get(
                 "https://nominatim.openstreetmap.org/search",
-                params={"q": query, "format": "json", "limit": 1, "countrycodes": "us"},
+                params=params,
                 headers={"User-Agent": "Opsdeck/2.0"},
             )
             resp.raise_for_status()
@@ -765,7 +780,9 @@ async def lookup_weather_location(
             parts = display_name.split(",")
             label = ", ".join(p.strip() for p in parts[:2]) if len(parts) >= 2 else display_name
 
-            # Find nearest airport for METAR/TFR/NOTAM data
+            # Find nearest airport for METAR/TFR/NOTAM data. AviationWeather
+            # stationinfo is global for stations it knows; leave empty if
+            # nothing is found so the caller can supply a known ICAO code.
             airport_icao = ""
             try:
                 airport_resp = await client.get(
@@ -787,4 +804,5 @@ async def lookup_weather_location(
                 "airport_icao": airport_icao,
             }
     except Exception as exc:
+        logger.warning("weather/lookup failed for query=%s: %s", query, exc)
         return {"error": str(exc)}
