@@ -87,8 +87,8 @@ pilot. Use third person throughout. Do not include pilot coaching."""
     try:
         async with httpx.AsyncClient(timeout=300) as client:
             resp = await client.post(url, params={"key": resolved_key}, json=payload)
-            resp.raise_for_status()
             logger.info("Gemini response: %d in %.1fs", resp.status_code, resp.elapsed.total_seconds())
+            resp.raise_for_status()
             data = resp.json()
 
         candidates = data.get("candidates") or []
@@ -110,8 +110,9 @@ pilot. Use third person throughout. Do not include pilot coaching."""
         logger.error("Gemini request timed out after 300s for '%s'", mission_title)
         raise
     except httpx.HTTPStatusError as exc:
-        logger.error("Gemini HTTP error %s: %s", exc.response.status_code, exc)
-        raise
+        # Never log the full request URL — the API key is in the query string.
+        logger.error("Gemini HTTP error %s: %s", exc.response.status_code, exc.response.text[:500])
+        raise RuntimeError(f"Gemini request failed with status {exc.response.status_code}") from exc
     except Exception as exc:
         logger.error("Gemini request failed: %s", exc, exc_info=True)
         raise
