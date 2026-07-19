@@ -1,4 +1,4 @@
-"""LLM provider dispatcher — routes report generation to Claude or Ollama.
+"""LLM provider dispatcher — routes report generation to Claude, Gemini, or Ollama.
 
 When MANAGED_INSTANCE=true, always uses Claude regardless of DB settings.
 """
@@ -31,7 +31,7 @@ async def get_llm_provider(db: AsyncSession) -> str:
         return "claude"
 
     provider = await _get_setting(db, "llm_provider")
-    if provider and provider in ("claude", "ollama"):
+    if provider and provider in ("claude", "gemini", "ollama"):
         return provider
     return settings.llm_provider
 
@@ -73,7 +73,15 @@ async def generate_report(
         api_key = await _get_setting(db, "anthropic_api_key") or ""
         model = await _get_setting(db, "claude_model") or None
         return await claude_generate(**kwargs, api_key=api_key, model=model)
-    else:
-        from app.services.ollama import generate_report as ollama_generate
 
-        return await ollama_generate(**kwargs)
+    if provider == "gemini":
+        from app.services.gemini_llm import generate_report as gemini_generate
+
+        # Resolve API key + model from DB first, then config fallback
+        api_key = await _get_setting(db, "gemini_api_key") or ""
+        model = await _get_setting(db, "gemini_model") or None
+        return await gemini_generate(**kwargs, api_key=api_key, model=model)
+
+    from app.services.ollama import generate_report as ollama_generate
+
+    return await ollama_generate(**kwargs)

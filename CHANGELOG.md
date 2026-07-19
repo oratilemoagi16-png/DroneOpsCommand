@@ -4,6 +4,19 @@
 
 Notable changes to DroneOpsCommand. Dates are absolute (YYYY-MM-DD, UTC).
 
+## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.2
+
+Adds Gemini as a third LLM provider for mission report generation, alongside
+Claude and Ollama.
+
+* New backend service `app/services/gemini_llm.py` calls the Gemini
+  `generateContent` REST endpoint via the existing `httpx` client.
+* Dispatcher, status endpoint, and settings schema updated to recognize
+  `gemini` as a valid `llm_provider` value.
+* Settings page (`AiTab.tsx`) now exposes provider selection, API key, and
+  model inputs for Gemini.
+* New env vars: `GEMINI_API_KEY` and `GEMINI_MODEL` (default `gemini-1.5-pro`).
+
 ## 2026-07-16 — ops(backups): off-host R2 push + fix broken tos_signed path + freshness metric [skip-deploy]
 
 Ops-script only (no app/version change). The 2026-07-16 BOS backup audit found

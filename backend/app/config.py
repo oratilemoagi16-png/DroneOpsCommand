@@ -21,7 +21,11 @@ class Settings(BaseSettings):
     # surfaces in the UI as a generic "report failed" toast.
     claude_model: str = "claude-sonnet-4-6"
 
-    # LLM provider selection: "ollama" or "claude"
+    # Gemini (Google)
+    gemini_api_key: str = ""
+    gemini_model: str = "gemini-1.5-pro"
+
+    # LLM provider selection: "ollama", "claude", or "gemini"
     llm_provider: str = "ollama"
 
     # OpenDroneLog

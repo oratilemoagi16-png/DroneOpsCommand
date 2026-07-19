@@ -591,12 +591,16 @@ async def test_opensky_credentials(
 LLM_KEYS = [
     "llm_provider",
     "anthropic_api_key",
+    "gemini_api_key",
+    "gemini_model",
 ]
 
 
 class LlmSettings(BaseModel):
     llm_provider: str = "ollama"
     anthropic_api_key: str = ""
+    gemini_api_key: str = ""
+    gemini_model: str = ""
 
 
 @router.get("/llm")
@@ -619,13 +623,16 @@ async def get_llm_settings(
     data = {}
     for key in LLM_KEYS:
         data[key] = rows.get(key, "")
-    # Default provider to config value if not set in DB
+    # Default provider/model to config values if not set in DB
     if not data["llm_provider"]:
         data["llm_provider"] = app_settings.llm_provider
-    # Mask API key for frontend display
-    if data.get("anthropic_api_key"):
-        val = data["anthropic_api_key"]
-        data["anthropic_api_key"] = val[:7] + "••••••••" + val[-4:] if len(val) > 11 else "••••••••"
+    if not data["gemini_model"]:
+        data["gemini_model"] = app_settings.gemini_model
+    # Mask API keys for frontend display
+    for key in ("anthropic_api_key", "gemini_api_key"):
+        if data.get(key):
+            val = data[key]
+            data[key] = val[:7] + "••••••••" + val[-4:] if len(val) > 11 else "••••••••"
     return data
 
 
@@ -642,8 +649,8 @@ async def update_llm_settings(
     updates = payload.model_dump()
 
     for key, value in updates.items():
-        # Skip masked API key — don't overwrite with mask
-        if key == "anthropic_api_key" and "••••" in value:
+        # Skip masked API keys — don't overwrite with mask
+        if key in ("anthropic_api_key", "gemini_api_key") and "••••" in value:
             continue
 
         result = await db.execute(
