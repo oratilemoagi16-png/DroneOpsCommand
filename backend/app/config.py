@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     # Gemini (Google)
     gemini_api_key: str = ""
-    gemini_model: str = "gemini-2.0-flash"
+    gemini_model: str = "gemini-3.5-flash"
 
     # LLM provider selection: "ollama", "claude", or "gemini"
     llm_provider: str = "ollama"

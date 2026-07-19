@@ -28,7 +28,7 @@ export default function AiTab() {
   const [llmSaving, setLlmSaving] = useState(false);
 
   const llmForm = useForm({
-    initialValues: { llm_provider: 'ollama', anthropic_api_key: '', gemini_api_key: '', gemini_model: 'gemini-2.0-flash' },
+    initialValues: { llm_provider: 'ollama', anthropic_api_key: '', gemini_api_key: '', gemini_model: 'gemini-3.5-flash' },
   });
 
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function AiTab() {
                 />
                 <TextInput
                   label="Gemini Model"
-                  placeholder="gemini-2.0-flash"
+                  placeholder="gemini-3.5-flash"
                   {...llmForm.getInputProps('gemini_model')}
                   styles={inputStyles}
                 />
