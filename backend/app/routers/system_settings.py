@@ -59,8 +59,8 @@ BRANDING_KEYS = [
 
 # Defaults used when no branding is configured
 BRANDING_DEFAULTS = {
-    "company_name": "DroneOps",
-    "company_tagline": "Professional Aerial Operations",
+    "company_name": "Opsdeck",
+    "company_tagline": "Mission Operations",
     "company_website": "",
     "company_social_url": "",
     "company_contact_email": "",
@@ -332,10 +332,10 @@ async def test_smtp(
     from email.mime.text import MIMEText
 
     try:
-        msg = MIMEText("This is a test email from DroneOpsCommand.")
+        msg = MIMEText("This is a test email from Opsdeck v2.")
         msg["From"] = f"{smtp['smtp_from_name']} <{smtp['smtp_from_email']}>"
         msg["To"] = smtp["smtp_from_email"]
-        msg["Subject"] = "DroneOpsCommand SMTP Test"
+        msg["Subject"] = "Opsdeck v2 SMTP Test"
 
         from app.services.email_service import _parse_bool
         smtp_port = int(smtp["smtp_port"])
@@ -752,7 +752,7 @@ async def lookup_weather_location(
             resp = await client.get(
                 "https://nominatim.openstreetmap.org/search",
                 params={"q": query, "format": "json", "limit": 1, "countrycodes": "us"},
-                headers={"User-Agent": "DroneOpsCommand/1.0"},
+                headers={"User-Agent": "Opsdeck/2.0"},
             )
             resp.raise_for_status()
             results = resp.json()

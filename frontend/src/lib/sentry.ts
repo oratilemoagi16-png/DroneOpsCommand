@@ -1,5 +1,5 @@
 /**
- * Sentry/GlitchTip frontend bootstrap for DroneOpsCommand.
+ * Sentry/GlitchTip frontend bootstrap for Opsdeck v2.
  *
  * Activates only when VITE_SENTRY_DSN is set at build time. In the
  * common case (no DSN) this is a pure no-op — no network, no module
@@ -36,7 +36,7 @@ export function initFrontendSentry(): boolean {
   try {
     Sentry.init({
       dsn,
-      release: `droneops-frontend@${release}`,
+      release: `opsdeck-frontend@${release}`,
       environment,
       // Lightweight — GlitchTip's throughput budget is modest.
       tracesSampleRate: 0.05,

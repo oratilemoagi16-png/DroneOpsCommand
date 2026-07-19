@@ -72,7 +72,7 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_publishable_key: str = ""
 
-    # Managed instance (hosted by BarnardHQ)
+    # Managed instance (hosted by the operator or a managed provider)
     managed_instance: bool = False
     client_id: str = ""
 
@@ -87,7 +87,7 @@ class Settings(BaseSettings):
     # ntfy (ADR-0036 — replaces Pushover transport for ADR-0002 §5
     # silent-drift watchdog + ADR-0003 zero-touch key rotation alerts).
     # Optional: if the publisher token is set, alerts publish to the
-    # self-hosted ntfy at ntfy.barnardhq.com (with publisher-side
+    # private ntfy instance at ntfy.barnardhq.com (with publisher-side
     # fallback to ntfy.sh on a per-service obscured topic). Unset =
     # no-op (watchdog still logs to structured JSON, alerts just
     # don't go out). Watchdog contract from ADR-0002 §5 + ADR-0003 is

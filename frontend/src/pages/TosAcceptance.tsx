@@ -8,10 +8,10 @@
  * acceptance row back to the customer profile created by the intake
  * flow.
  *
- * Customer-facing — wrapped in <CustomerLayout> with the BarnardHQ
- * brand pass (v2.65.0). The TOS PDF iframe sits on a white surface
+ * Customer-facing — wrapped in <CustomerLayout> with the Opsdeck
+ * brand pass. The TOS PDF iframe sits on a white surface
  * inside the dark themed shell so the document itself remains
- * legible while every chrome/affordance reads as BarnardHQ.
+ * legible while every chrome/affordance reads as Opsdeck.
  *
  * ADR-0010.
  */
@@ -168,7 +168,7 @@ export default function TosAcceptance() {
                 fontSize: 'clamp(32px, 5.5vw, 48px)',
               }}
             >
-              THANK YOU. WELCOME TO BARNARDHQ.
+              THANK YOU. WELCOME TO OPSDECK.
             </Title>
             <Text
               style={{
@@ -255,7 +255,7 @@ export default function TosAcceptance() {
             fontSize: 'clamp(28px, 5vw, 40px)',
           }}
         >
-          BARNARDHQ LLC &mdash; TERMS OF SERVICE
+          OPSDECK &mdash; TERMS OF SERVICE
         </Title>
         <Text
           mt={6}
@@ -390,7 +390,7 @@ export default function TosAcceptance() {
                       lineHeight: 1.6,
                     }}
                   >
-                    I have read and agree to the BarnardHQ LLC Terms of
+                    I have read and agree to the Opsdeck Terms of
                     Service. By checking this box and clicking{' '}
                     <strong style={{ color: customerBrand.brandCyan }}>
                       Accept &amp; Sign

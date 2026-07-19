@@ -1,20 +1,18 @@
-# DroneOpsCommand
+# Opsdeck v2
 
-**Self-hosted mission management, flight log analysis, GPS flight replay with video export, AI report generation, invoicing, and real-time airspace monitoring for commercial drone operators.**
+**Mission management, flight log analysis, GPS flight replay with video export, AI report generation, invoicing, and real-time airspace monitoring for commercial drone operators.**
 
-**Version 2.80.3** | [Quick Start](#quick-start) | [Features](#features) | [Configuration](#configuration) | [Contributing](CONTRIBUTING.md) | [License](LICENSE)
-
-**Live Demo:** [command-demo.barnardhq.com](https://command-demo.barnardhq.com) (login: `demo` / `demo123`)
+**Version 2.80.4** | [Quick Start](#quick-start) | [Features](#features) | [Configuration](#configuration)
 
 ---
 
-DroneOpsCommand is a self-hosted, full-stack platform for managing commercial drone operations end-to-end. It covers the complete lifecycle from flight data ingestion and GPS telemetry visualization through AI-powered report generation, invoicing, and client delivery — all running on your own hardware.
+Opsdeck v2 is a self-managed, full-stack platform for managing commercial drone operations end-to-end. It covers the complete lifecycle from flight data ingestion and GPS telemetry visualization through AI-powered report generation, invoicing, and client delivery — all running on your own hardware.
 
 Designed for FAA Part 107 certified operators running missions such as search & rescue, inspections, mapping, videography, and more.
 
-### Why DroneOpsCommand?
+### Why Opsdeck v2?
 
-- **100% self-hosted** — runs on your own hardware via Docker Compose. No cloud dependencies, no per-seat licensing, no subscription fees.
+- **Self-managed** — runs on your own hardware via Docker Compose. No cloud dependencies, no per-seat licensing, no subscription fees.
 - **AI report generation** — local via Ollama (Qwen 2.5 3B default) or cloud via Claude API. Your data stays on your hardware with Ollama; Claude API available for faster, higher-quality output.
 - **White-label ready** — company name, tagline, and branding are fully configurable from the Settings UI. No code changes needed to make it yours.
 - **Full lifecycle** — flight log upload, GPS path visualization, animated flight replay with video export, telemetry analysis, mission management, AI reports, PDF export, invoicing, and email delivery in one platform.
@@ -35,8 +33,6 @@ Designed for FAA Part 107 certified operators running missions such as search & 
 - [API Reference](#api-reference)
 - [Roadmap](#roadmap)
 - [Development](#development)
-- [Contributing](#contributing)
-- [License](#license)
 
 ---
 
@@ -47,7 +43,7 @@ Designed for FAA Part 107 certified operators running missions such as search & 
 - [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (v2+)
 - x86_64 or ARM64 host
 
-**Minimum resources (self-hosted):**
+**Minimum resources:**
 
 | Resource | Minimum | Recommended | Notes |
 |----------|---------|-------------|-------|
@@ -55,7 +51,7 @@ Designed for FAA Part 107 certified operators running missions such as search & 
 | CPU      | 4 cores | 6–8 cores   | `docker-compose.yml` pins Ollama to 6 cores. Fewer cores means slow AI report generation. |
 | Disk     | 30 GB   | 100 GB+     | Flight logs, Postgres, Ollama model, video exports. Grows with usage. |
 
-> **Docker Desktop users (Windows/Mac) — READ THIS.** Docker Desktop runs containers inside a Linux VM with its own RAM/CPU limits. The defaults are usually **too low** for DroneOpsCommand. Open **Docker Desktop → Settings → Resources** and raise **Memory to at least 8 GB** (16 GB recommended) and **CPUs to at least 4** before `docker compose up`. If the VM runs out of memory the stack will crash at startup or under load with no clear error. `setup-server.sh` does not run on Windows/Mac, so you won't see a preflight warning — allocate the VM resources manually.
+> **Docker Desktop users (Windows/Mac) — READ THIS.** Docker Desktop runs containers inside a Linux VM with its own RAM/CPU limits. The defaults are usually **too low** for Opsdeck v2. Open **Docker Desktop → Settings → Resources** and raise **Memory to at least 8 GB** (16 GB recommended) and **CPUs to at least 4** before `docker compose up`. If the VM runs out of memory the stack will crash at startup or under load with no clear error. `setup-server.sh` does not run on Windows/Mac, so you won't see a preflight warning — allocate the VM resources manually.
 
 > **Windows?** See the [Windows Self-Hosting Guide](docs/windows-self-hosting.md) for step-by-step Docker Desktop + WSL 2 setup.
 
@@ -63,8 +59,8 @@ Designed for FAA Part 107 certified operators running missions such as search & 
 
 ```bash
 # 1. Clone and configure
-git clone https://github.com/BigBill1418/DroneOpsCommand.git
-cd DroneOpsCommand
+git clone <repository-url>
+cd opsdeck-v2
 cp .env.example .env
 
 # 2. Set your secrets (IMPORTANT: change these before first run)
@@ -714,7 +710,7 @@ Full interactive API documentation is available at `http://localhost:3080/docs` 
 
 ### Next — Multi-Tenant Managed Hosting
 
-Transform DroneOpsCommand from a self-hosted tool into a revenue-generating SaaS product. The self-hosted open-source path remains for operators who want it — managed hosting is the commercial tier.
+Transform Opsdeck v2 from a self-managed tool into a revenue-generating SaaS product. The self-managed path remains for operators who want it — managed hosting is the commercial tier.
 
 **Tenant Architecture**
 - Schema-per-tenant isolation in PostgreSQL. Each tenant gets their own schema with identical table structures.
@@ -759,9 +755,9 @@ Transform DroneOpsCommand from a self-hosted tool into a revenue-generating SaaS
 - ~~**Claude API Integration**~~ — **Done.** Switchable from Settings or via `LLM_PROVIDER=claude` env var.
 - **React Native Android App** — Mission creation, photo capture on-site, report review, and customer lookup from the field. Communicates with the stack via JWT-authenticated HTTPS API.
 - **Voice-to-Text** — On-device speech recognition in the Android app for dictating operator field notes hands-free during or after missions.
-- **DroneOpsSync Deep Integration** — Field-captured photos auto-upload to the correct mission. Field notes from the controller pre-populate report narrative. JWT API is already in place.
+- **Opsdeck Sync Deep Integration** — Field-captured photos auto-upload to the correct mission. Field notes from the controller pre-populate report narrative. JWT API is already in place.
 - **Public API & Webhooks** — Let third-party tools (dispatch software, QuickBooks, project management) integrate with Command. Webhooks on mission status changes, invoice payment, and report delivery.
-- **Public Demo Instance** — **Live** at [command-demo.barnardhq.com](https://command-demo.barnardhq.com) with pre-loaded sample data, sandboxed operations (demo guard middleware), demo-mode banner with "Deploy Your Own" CTA, and 24-hour auto-reset. See `docker-compose.demo.yml` for deployment config. **Always start the demo via `./bootstrap.sh`** — never `docker compose up -d` directly. The bootstrap script validates `.env.demo` before compose runs, so a missing or incomplete env file produces a clear error instead of silently falling back to default credentials (the failure mode that caused a 6h+ outage on 2026-04-16).
+- **Local Demo Instance** — Run with `docker-compose.demo.yml` for pre-loaded sample data, sandboxed operations (demo guard middleware), and a demo-mode banner. **Always start the demo via `./bootstrap.sh`** — never `docker compose up -d` directly. The bootstrap script validates `.env.demo` before compose runs, so a missing or incomplete env file produces a clear error instead of silently falling back to default credentials (the failure mode that caused a 6h+ outage on 2026-04-16).
 
 ---
 

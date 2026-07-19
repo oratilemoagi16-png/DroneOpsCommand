@@ -14,7 +14,6 @@ import {
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import {
   IconBattery3,
-  IconBrandGithub,
   IconChartBar,
   IconDashboard,
   IconDrone,
@@ -98,8 +97,8 @@ function NavContent({
       <div style={{ borderTop: '1px solid #1a1f2e', padding: '8px' }}>
         <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0 4px' }}>
           <img
-            src="/logo.svg"
-            alt="BarnardHQ"
+            src="/logo.png"
+            alt="Opsdeck"
             style={{ width: 140, opacity: 0.35 }}
           />
         </div>
@@ -112,28 +111,15 @@ function NavContent({
             label: { fontFamily: "'Rajdhani', sans-serif", fontWeight: 600 },
           }}
         />
-        <Group gap={8} mt="xs" px={4}>
-          <Text
-            size="xs"
-            c="#5a6478"
-            style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '15px' }}
-          >
-            v2.80.3
-          </Text>
-          <Tooltip label="Star on GitHub" position="right">
-            <ActionIcon
-              variant="subtle"
-              color="gray"
-              size="xs"
-              component="a"
-              href="https://github.com/BigBill1418/DroneOpsCommand"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconBrandGithub size={14} />
-            </ActionIcon>
-          </Tooltip>
-        </Group>
+        <Text
+          size="xs"
+          c="#5a6478"
+          mt="xs"
+          px={4}
+          style={{ fontFamily: "'Share Tech Mono', monospace", fontSize: '15px' }}
+        >
+          v2.80.4
+        </Text>
       </div>
     </>
   );
@@ -260,19 +246,7 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
             zIndex: 100,
           }}
         >
-          DEMO INSTANCE — Some actions are restricted.{' '}
-          <a
-            href="https://github.com/BigBill1418/DroneOpsCommand"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              color: '#fff',
-              textDecoration: 'underline',
-              fontWeight: 700,
-            }}
-          >
-            Deploy Your Own
-          </a>
+          DEMO INSTANCE — Some actions are restricted.
         </div>
       )}
 
@@ -365,8 +339,8 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
           <AppShell.Section p="xs" style={{ borderTop: '1px solid #1a1f2e' }}>
             <div style={{ display: 'flex', justifyContent: 'center', padding: '8px 0 4px' }}>
               <img
-                src="/logo.svg"
-                alt="BarnardHQ"
+                src="/logo.png"
+                alt="Opsdeck"
                 style={{ width: 140, opacity: 0.35 }}
               />
             </div>
@@ -382,31 +356,18 @@ export default function AppLayout({ onLogout }: AppLayoutProps) {
                 },
               }}
             />
-            <Group gap={8} mt="xs" px={4}>
-              <Text
-                size="xs"
-                c="#5a6478"
-                style={{
-                  fontFamily: "'Share Tech Mono', monospace",
-                  fontSize: '15px',
-                }}
-              >
-                v2.80.3
-              </Text>
-              <Tooltip label="Star on GitHub" position="right">
-                <ActionIcon
-                  variant="subtle"
-                  color="gray"
-                  size="xs"
-                  component="a"
-                  href="https://github.com/BigBill1418/DroneOpsCommand"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <IconBrandGithub size={14} />
-                </ActionIcon>
-              </Tooltip>
-            </Group>
+            <Text
+              size="xs"
+              c="#5a6478"
+              mt="xs"
+              px={4}
+              style={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: '15px',
+              }}
+            >
+              v2.80.4
+            </Text>
           </AppShell.Section>
         </AppShell.Navbar>
       )}

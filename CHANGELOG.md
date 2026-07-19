@@ -2,7 +2,24 @@
 
 # Changelog
 
-Notable changes to DroneOpsCommand. Dates are absolute (YYYY-MM-DD, UTC).
+Notable changes to Opsdeck v2. Dates are absolute (YYYY-MM-DD, UTC).
+
+## 2026-07-19 — rebrand: Opsdeck v2 — v2.80.4
+
+Rebrand the application to **Opsdeck v2** across user-visible surfaces and
+remove GitHub/open-source references.
+
+* App title, FastAPI metadata, health endpoint, and PWA manifest updated to
+  "Opsdeck v2".
+* Default company name and tagline changed to "Opsdeck" / "Mission Operations".
+* New generated logo assets (`logo.png`, `logo-full.png`, PWA icons) replace
+  the previous DroneOps/D.O.C branding.
+* Removed GitHub footer links, "Deploy Your Own" CTAs, and author/website
+  links from the login, setup, and app-shell UI.
+* Customer-facing email templates and transactional email subjects updated
+  to use the Opsdeck brand.
+* README rewritten to reflect the Opsdeck v2 identity and stripped of GitHub
+  clone URLs, live demo links, and "open-source" language.
 
 ## 2026-07-19 — feat(llm): add Google Gemini provider — v2.80.3
 

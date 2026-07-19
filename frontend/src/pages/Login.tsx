@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  Anchor,
   Box,
   Button,
   Card,
@@ -99,7 +98,7 @@ export default function Login({ onLogin }: LoginProps) {
               DEMO INSTANCE
             </Text>
             <Text size="xs" c="#e8edf2" ta="center" style={{ fontFamily: "'Share Tech Mono', monospace" }}>
-              Explore DroneOpsCommand with pre-loaded sample data.
+              Explore Opsdeck v2 with pre-loaded sample data.
               Some actions are restricted.
             </Text>
             <Card padding="xs" radius="sm" style={{ background: '#050608', border: '1px solid #1a1f2e', width: '100%' }}>
@@ -112,9 +111,6 @@ export default function Login({ onLogin }: LoginProps) {
                 </Text>
               </Stack>
             </Card>
-            <Anchor href="https://github.com/BigBill1418/DroneOpsCommand" target="_blank" c="#00d4ff" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-              Deploy Your Own Instance
-            </Anchor>
           </Stack>
         </Card>
       )}
@@ -136,7 +132,7 @@ export default function Login({ onLogin }: LoginProps) {
           <Stack gap="lg">
             <Center>
               <img
-                src="/logo-full.svg"
+                src="/logo-full.png"
                 alt={branding.company_name}
                 style={{ width: '100%', maxWidth: 420, height: 'auto' }}
               />
@@ -184,17 +180,9 @@ export default function Login({ onLogin }: LoginProps) {
         </form>
       </Card>
 
-      <Stack align="center" gap={4}>
-        <Text size="xs" c="#5a6478" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          Created by Bill Barnard — <Anchor href="mailto:me@barnardHQ.com" c="#5a6478" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace" }}>me@barnardHQ.com</Anchor>
-        </Text>
-        <Anchor href="https://www.barnardHQ.com" target="_blank" c="#00d4ff" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          www.barnardHQ.com
-        </Anchor>
-        <Text size="xs" c="#3a3f4a" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''}
-        </Text>
-      </Stack>
+      <Text size="xs" c="#3a3f4a" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
+        v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''}
+      </Text>
     </Box>
   );
 }

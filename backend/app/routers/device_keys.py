@@ -1,7 +1,7 @@
 """Device API key management — Settings → Device Access.
 
 Allows admins to create, list, and revoke static API keys used by field
-controllers (DroneOpsSync) to upload flight logs without a user login.
+controllers (Opsdeck Sync) to upload flight logs without a user login.
 """
 
 import hashlib
@@ -62,7 +62,7 @@ async def create_device_key(
     """Create a new device API key.
 
     The raw key is returned exactly ONCE in this response and is never stored.
-    Copy it to your DroneOpsSync controller immediately.
+    Copy it to your Opsdeck Sync controller immediately.
     """
     raw_key = secrets.token_urlsafe(32)
     key_hash = hashlib.sha256(raw_key.encode()).hexdigest()

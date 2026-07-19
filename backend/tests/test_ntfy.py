@@ -11,7 +11,7 @@ Coverage:
   - Pushover-shaped priority -> ntfy named   (test_priority_mapping)
   - Bearer auth header carried on primary    (test_primary_carries_bearer)
   - Fallback omits Authorization header      (test_fallback_no_auth_header)
-  - Title prefix [DroneOpsCommand]           (test_title_prefix_applied)
+  - Title prefix [Opsdeck v2]                (test_title_prefix_applied)
   - Default click is NOC status fallback     (test_default_click_url)
 
 Approach: hermetic — patch ``httpx.AsyncClient`` and the redis client
@@ -113,7 +113,7 @@ async def test_send_alert_falls_back_with_prefix(caplog):
     assert any("ntfy.sh" in u for u in captured_headers)
     # Fallback Title is prefixed
     fallback_headers = next(h for u, h in captured_headers.items() if "ntfy.sh" in u)
-    assert fallback_headers["Title"].startswith("[FALLBACK] [DroneOpsCommand] ")
+    assert fallback_headers["Title"].startswith("[FALLBACK] [Opsdeck v2] ")
 
 
 @pytest.mark.asyncio
@@ -226,7 +226,7 @@ def test_fallback_no_auth_header():
         fallback=True,
     )
     assert "Authorization" not in h
-    assert h["Title"].startswith("[FALLBACK] [DroneOpsCommand] ")
+    assert h["Title"].startswith("[FALLBACK] [Opsdeck v2] ")
 
 
 def test_title_prefix_applied():
@@ -240,7 +240,7 @@ def test_title_prefix_applied():
         publisher_token="tk",
         fallback=False,
     )
-    assert h["Title"] == "[DroneOpsCommand] device silent"
+    assert h["Title"] == "[Opsdeck v2] device silent"
 
 
 def test_default_click_url():

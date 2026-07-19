@@ -189,7 +189,7 @@ services:
       - OTEL_SERVICE_NAME=droneops-api
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.4}
       # ADR-0002 §5 + ADR-0003 alerts via ntfy (ADR-0036).
       # Unset = no-op (structured JSON logs still emit).
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}
@@ -295,7 +295,7 @@ services:
       - OTEL_SERVICE_NAME=droneops-worker
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.4}
       # ADR-0002 §5 + ADR-0003 alerts from silence watchdog task via
       # ntfy (ADR-0036).
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}
@@ -334,7 +334,7 @@ services:
       - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
       - TENANT=${TENANT:-shared}
       - ENV=${ENV:-prod}
-      - APP_VERSION=${APP_VERSION:-2.67.3}
+      - APP_VERSION=${APP_VERSION:-2.80.4}
       # ADR-0036 — beat scheduler enqueues silence watchdog and rotation
       # finalizer; the watchdog task itself emits the alert via ntfy.
       - NTFY_DRONEOPS_PUBLISHER_TOKEN=${NTFY_DRONEOPS_PUBLISHER_TOKEN:-}

@@ -23,7 +23,7 @@ async def _get_setting(db: AsyncSession, key: str) -> str | None:
 async def get_llm_provider(db: AsyncSession) -> str:
     """Determine the active LLM provider.
 
-    Managed instances always use Claude. Self-hosted checks DB then config.
+    Managed instances always use Claude. Self-managed deployments check DB then config.
     """
     from app.config import settings
 
@@ -47,7 +47,7 @@ async def generate_report(
     total_duration_seconds: float = 0,
     total_distance_meters: float = 0,
     mission_date: str | None = None,
-    company_name: str = "DroneOps",
+    company_name: str = "Opsdeck",
 ) -> str:
     """Generate a report using the configured LLM provider."""
     provider = await get_llm_provider(db)

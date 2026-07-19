@@ -54,7 +54,7 @@ _setup_json_logging()
 logger = logging.getLogger("doc")
 
 # Observability bootstrap. Both inits are DSN/endpoint-gated — unset
-# env = no-op, so self-hosted single-tenant installs keep working
+# env = no-op, so self-managed single-tenant installs keep working
 # without the central plane. Runs AFTER logging setup so the init logs
 # are JSON-shaped, BEFORE FastAPI construction so the SDK's integrations
 # can hook import paths that routers may trigger.
@@ -571,9 +571,9 @@ MultiPartParser.max_file_size = 4 * 1024 * 1024  # 4 MB spool-to-disk threshold
 logger.info("MultiPartParser spool threshold set to 4 MB (large uploads spool to disk)")
 
 app = FastAPI(
-    title="D.O.C — Drone Operations Command",
-    description="Self-hosted mission management, flight log analysis, AI report generation, invoicing, telemetry visualization, and real-time airspace monitoring for commercial drone operators.",
-    version="2.80.3",
+    title="Opsdeck v2",
+    description="Mission management, flight log analysis, AI report generation, invoicing, telemetry visualization, and real-time airspace monitoring for commercial drone operators.",
+    version="2.80.4",
     lifespan=lifespan,
 )
 
@@ -583,7 +583,7 @@ instrument_fastapi(app)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# CORS — allow any origin for LAN-only self-hosted deployment.
+# CORS — allow any origin for LAN-only self-managed deployment.
 # All endpoints are behind JWT or device-API-key auth so origin
 # restriction adds no real security on a private network.
 app.add_middleware(
@@ -666,7 +666,7 @@ async def demo_status():
     """Public endpoint — tells the frontend whether demo mode is active."""
     return {
         "demo_mode": settings.demo_mode,
-        "message": "This is a demo instance of DroneOpsCommand. Some actions are restricted."
+        "message": "This is a demo instance of Opsdeck v2. Some actions are restricted."
         if settings.demo_mode else None,
     }
 
@@ -780,7 +780,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
 
     body: dict[str, object] = {
         "status": "healthy",
-        "service": "D.O.C — Drone Operations Command",
+        "service": "Opsdeck v2",
     }
     if settings.managed_instance:
         body["managed"] = True

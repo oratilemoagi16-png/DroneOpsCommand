@@ -1,6 +1,6 @@
 """ntfy notification service — ADR-0036 transport for ADR-0002 §5 + ADR-0003 alerts.
 
-Single outbound path for operator alerts from the DroneOps backend. The
+Single outbound path for operator alerts from the Opsdeck backend. The
 companion (DJI RC Pro) cannot reach the alert transport itself — any
 reachability loss is detected server-side and published from here.
 
@@ -9,7 +9,7 @@ Migration note (ADR-0036, 2026-04-25): this module replaces the prior
 (``send_alert``, ``send_alert_sync``) so callers never had to change
 their parameter shapes. Only the transport changed:
 
-- pushover.net → self-hosted ntfy at ``ntfy.barnardhq.com`` (BOS-HQ)
+- pushover.net → private ntfy instance at ``ntfy.barnardhq.com`` (BOS-HQ)
 - Bearer auth (``NTFY_DRONEOPS_PUBLISHER_TOKEN``) instead of two
   Pushover keys.
 - Publisher-side fallback to ``ntfy.sh/<droneops-fallback-topic>`` on
@@ -66,7 +66,7 @@ _FALLBACK_TOPIC = "barnardhq-fleet-droneops-81b49d71de0f3e9fcf166e57f3c9846b"
 _DEFAULT_CLICK = "https://noc-mastercontrol.barnardhq.com/status/droneops"
 
 # Title prefix per ADR-0036 §Notification standard.
-_TITLE_PREFIX = "[DroneOpsCommand]"
+_TITLE_PREFIX = "[Opsdeck v2]"
 
 # Redis dedup key prefix is preserved across the migration so any
 # in-flight dedup entry from the old pushover module continues to apply

@@ -204,7 +204,7 @@ def generate_report_task(
     total_distance: float = 0,
     map_path: str | None = None,
     mission_date: str | None = None,
-    company_name: str = "DroneOps",
+    company_name: str = "Opsdeck",
 ):
     """Background task to generate LLM report content."""
     from sqlalchemy import create_engine, select
@@ -373,7 +373,7 @@ def check_device_silence_task() -> dict:
                 }
                 logger.warning("device_silence_detected", extra=entry)
 
-                title = f"DroneOps — {row.label} silent for {hours_silent}h"
+                title = f"Opsdeck — {row.label} silent for {hours_silent}h"
                 message = (
                     f"{row.label} (key {key_prefix}) was last seen "
                     f"{row.last_used_at.isoformat()}Z "

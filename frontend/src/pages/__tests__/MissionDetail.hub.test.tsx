@@ -58,7 +58,7 @@ function makeHandlers(missionStatus: string) {
       HttpResponse.json({
         id: 'inv-1',
         mission_id: MISSION_ID,
-        invoice_number: 'BARNARDHQ-2026-0001',
+        invoice_number: 'OPSDECK-2026-0001',
         subtotal: 100,
         tax_rate: 0,
         tax_amount: 0,

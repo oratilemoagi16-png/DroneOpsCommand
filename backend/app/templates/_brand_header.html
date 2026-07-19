@@ -1,12 +1,12 @@
 {# ───────────────────────────────────────────────────────────────────
-   BarnardHQ brand-pass shared header strip (v2.65.0).
+   Opsdeck brand-pass shared header strip.
 
    Customer-facing emails only. Operator-side emails (e.g. report
    PDFs) keep their existing chrome.
 
    Variables consumed (all optional, defaults applied here):
-     • company_name — defaults "BarnardHQ"
-     • company_tagline — defaults "Drone Operations"
+     • company_name — defaults "Opsdeck"
+     • company_tagline — defaults "Mission Operations"
      • brand_primary_color — defaults brand navy "#003858"
      • brand_accent_color — defaults TOS cyan "#189cc6"
      • company_logo_url — optional. If set, rendered above wordmark.
@@ -20,8 +20,7 @@
    ──────────────────────────────────────────────────────────────── #}
 <tr>
   <td style="background: {{ brand_primary_color | default('#003858') }}; padding: 0;">
-    {# Cyan accent bar pinned to the bottom of the navy strip — same
-       affordance the TOS PDF header carries on page 1+. #}
+    {# Cyan accent bar pinned to the bottom of the navy strip. #}
     <table width="100%" cellpadding="0" cellspacing="0" border="0">
       <tr>
         <td style="padding: 22px 30px;">
@@ -29,14 +28,14 @@
             <tr>
               <td align="left" valign="middle">
                 {% if company_logo_url %}
-                <img src="{{ company_logo_url }}" alt="{{ company_name | default('BarnardHQ') }}" style="max-height: 36px; max-width: 160px; display: block; margin-bottom: 6px;" />
+                <img src="{{ company_logo_url }}" alt="{{ company_name | default('Opsdeck') }}" style="max-height: 36px; max-width: 160px; display: block; margin-bottom: 6px;" />
                 {% endif %}
                 <div style="font-family: 'Bebas Neue', 'Arial Black', Arial, sans-serif; font-size: 26px; font-weight: 900; letter-spacing: 4px; color: #ffffff; line-height: 1;">
-                  {{ company_name | default('BarnardHQ') | upper }}
+                  {{ company_name | default('Opsdeck') | upper }}
                 </div>
               </td>
               <td align="right" valign="middle" style="font-family: 'Share Tech Mono', 'Courier New', monospace; font-size: 10px; color: {{ brand_accent_color | default('#189cc6') }}; letter-spacing: 3px; text-transform: uppercase; line-height: 1;">
-                {{ company_tagline | default('Drone Operations') | upper }}
+                {{ company_tagline | default('Mission Operations') | upper }}
               </td>
             </tr>
           </table>

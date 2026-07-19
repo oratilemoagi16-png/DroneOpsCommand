@@ -161,7 +161,7 @@ async def rotate_device_key(
     # already committed in the DB at this point.
     try:
         await send_alert(
-            title="DroneOps key rotated",
+            title="Opsdeck key rotated",
             message=(
                 f"Rotated device key for {device.label}. "
                 f"Grace ends {grace_until.isoformat()}Z. "

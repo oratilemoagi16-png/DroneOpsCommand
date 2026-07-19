@@ -226,7 +226,7 @@ async def upload_tos_pdf(
             detail=(
                 "Uploaded PDF is missing required AcroForm fields. "
                 f"Required: {', '.join(REQUIRED_FIELDS)}. "
-                "Use the BarnardHQ ToS Rev 3 template."
+                "Use the default Opsdeck ToS template."
             ),
         )
 
@@ -273,7 +273,7 @@ async def upload_default_tos(
             detail=(
                 "Uploaded PDF is missing required AcroForm fields. "
                 f"Required: {', '.join(REQUIRED_FIELDS)}. "
-                "Use the BarnardHQ ToS Rev 3 template."
+                "Use the default Opsdeck ToS template."
             ),
         )
 

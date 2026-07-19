@@ -2,17 +2,17 @@
  * CustomerLayout — shared visual shell for every customer-facing page.
  *
  * Wraps `/client/*` and `/tos/accept` content in a single, branded
- * frame so the customer experience reads as one continuous BarnardHQ
- * artifact (matching the TOS PDF's visual identity):
+ * frame so the customer experience reads as one continuous Opsdeck
+ * artifact:
  *
  *   ┌──────────────────────────────────────────────────────┐
- *   │  ▓ BARNARDHQ              [right slot — page context]│  ← navy header strip
+ *   │  ▓ OPSDECK                [right slot — page context]│  ← navy header strip
  *   ├──────────────────────────────────────────────────────┤
  *   │                                                       │
  *   │              [page content goes here]                │
  *   │                                                       │
  *   ├──────────────────────────────────────────────────────┤
- *   │  BarnardHQ LLC · Eugene, OR · FAA Part 107 · DOC-001 │  ← Share Tech Mono footer
+ *   │  Opsdeck · Mission Operations                        │  ← Share Tech Mono footer
  *   └──────────────────────────────────────────────────────┘
  *
  * Usage:
@@ -65,7 +65,7 @@ function Wordmark() {
           lineHeight: 1,
         }}
       >
-        BARNARDHQ
+        OPSDECK
       </Text>
       <Text
         component="span"
@@ -79,7 +79,7 @@ function Wordmark() {
           lineHeight: 1,
         }}
       >
-        DRONE OPERATIONS
+        v2
       </Text>
     </Group>
   );

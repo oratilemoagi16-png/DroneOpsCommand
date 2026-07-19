@@ -114,7 +114,7 @@ async def download_unsigned_template(request: Request) -> Response:
         content=tpl.bytes,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": 'inline; filename="BarnardHQ-Terms-of-Service.pdf"',
+            "Content-Disposition": 'inline; filename="Opsdeck-Terms-of-Service.pdf"',
             "Cache-Control": "no-store",
         },
     )
@@ -356,7 +356,7 @@ async def download_signed_by_token(
     return FileResponse(
         row.signed_pdf_path,
         media_type="application/pdf",
-        filename=f"BarnardHQ-ToS-{row.audit_id}.pdf",
+        filename=f"Opsdeck-ToS-{row.audit_id}.pdf",
     )
 
 
@@ -477,5 +477,5 @@ async def download_signed_operator(
     return FileResponse(
         row.signed_pdf_path,
         media_type="application/pdf",
-        filename=f"BarnardHQ-ToS-{row.audit_id}.pdf",
+        filename=f"Opsdeck-ToS-{row.audit_id}.pdf",
     )

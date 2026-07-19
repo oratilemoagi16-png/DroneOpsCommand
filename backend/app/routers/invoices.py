@@ -28,7 +28,7 @@ router = APIRouter(prefix="/api/missions", tags=["invoices"])
 
 
 # ADR-0011 §2 (v2.66.0) — sequential invoice numbering.
-# Format: BARNARDHQ-YYYY-NNNN, 4-digit zero-padded counter, year prefix
+# Format: OPSDECK-YYYY-NNNN, 4-digit zero-padded counter, year prefix
 # resets every Jan 1. Counter row keys per year so a reset is just a new
 # row coming online; old years' counters persist for audit. The counter
 # itself is held atomically inside a single UPDATE …  RETURNING (PG
@@ -42,7 +42,7 @@ _INVOICE_COUNTER_KEY_PREFIX = "invoice_number_counter_"
 async def _next_invoice_number(db: AsyncSession) -> str:
     """Atomic next sequence number per year.
 
-    Returns a string like `BARNARDHQ-2026-0001`. Safe under
+    Returns a string like `OPSDECK-2026-0001`. Safe under
     concurrency because the UPDATE RETURNING is one PG statement.
     First-use auto-creates the row at 1.
     """
@@ -65,7 +65,7 @@ async def _next_invoice_number(db: AsyncSession) -> str:
     result = await db.execute(sql, {"k": key})
     row = result.fetchone()
     next_int = int(row[0])
-    formatted = f"BARNARDHQ-{year}-{next_int:04d}"
+    formatted = f"OPSDECK-{year}-{next_int:04d}"
     logger.info(
         "[INVOICE-NUMBER] Allocated %s (counter=%s)", formatted, key,
     )

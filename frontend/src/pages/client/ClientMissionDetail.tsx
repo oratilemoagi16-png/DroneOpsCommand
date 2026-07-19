@@ -4,8 +4,8 @@
  * (deposit + balance) payment table with post-Stripe-redirect
  * polling.
  *
- * Customer-facing — wrapped in <CustomerLayout> with the BarnardHQ
- * brand pass (v2.65.0). All payment functionality preserved verbatim
+ * Customer-facing — wrapped in <CustomerLayout> with the Opsdeck
+ * brand pass. All payment functionality preserved verbatim
  * from agent A's deposit-feature commit `b8ead48`; this pass only
  * lifts the visual layer.
  */

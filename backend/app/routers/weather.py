@@ -362,7 +362,7 @@ async def _fetch_nws_alerts(lat: float, lon: float) -> list[dict]:
             resp = await client.get(
                 "https://api.weather.gov/alerts/active",
                 params={"point": f"{lat},{lon}"},
-                headers={"User-Agent": "DroneOpsCommand/1.0"},
+                headers={"User-Agent": "Opsdeck/2.0"},
             )
             if resp.status_code != 200:
                 return []

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  Anchor,
   Box,
   Button,
   Card,
@@ -92,7 +91,7 @@ export default function Setup({ onSetupComplete }: SetupProps) {
         <form onSubmit={handleSubmit}>
           <Stack gap="lg">
             <Center>
-              <img src="/logo-full.svg" alt={branding.company_name} style={{ width: '100%', maxWidth: 420, height: 'auto' }} />
+              <img src="/logo-full.png" alt={branding.company_name} style={{ width: '100%', maxWidth: 420, height: 'auto' }} />
             </Center>
             <Card padding="sm" radius="sm" style={{ background: '#050608', border: '1px solid #00d4ff33' }}>
               <Stack gap={4} align="center">
@@ -165,17 +164,9 @@ export default function Setup({ onSetupComplete }: SetupProps) {
           </Stack>
         </form>
       </Card>
-      <Stack align="center" gap={4}>
-        <Text size="xs" c="#5a6478" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          Created by Bill Barnard — <Anchor href="mailto:me@barnardHQ.com" c="#5a6478" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace" }}>me@barnardHQ.com</Anchor>
-        </Text>
-        <Anchor href="https://www.barnardHQ.com" target="_blank" c="#00d4ff" size="xs" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          www.barnardHQ.com
-        </Anchor>
-        <Text size="xs" c="#3a3f4a" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
-          v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''}
-        </Text>
-      </Stack>
+      <Text size="xs" c="#3a3f4a" style={{ fontFamily: "'Share Tech Mono', monospace", letterSpacing: '1px' }}>
+        v{typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : ''}
+      </Text>
     </Box>
   );
 }

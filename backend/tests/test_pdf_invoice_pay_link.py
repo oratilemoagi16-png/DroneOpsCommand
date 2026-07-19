@@ -331,7 +331,7 @@ def _render_pdf_context(**kwargs):
 
 def _make_invoice(*, total=500.0, paid_in_full=False):
     return {
-        "invoice_number": "BARNARDHQ-2026-0001",
+        "invoice_number": "OPSDECK-2026-0001",
         "subtotal": total,
         "tax_rate": 0.0,
         "tax_amount": 0.0,
@@ -482,7 +482,7 @@ def _make_route_mission(*, is_billable=True, paid_in_full=False, total=500.0,
     ) if has_customer else None
 
     invoice = SimpleNamespace(
-        invoice_number="BARNARDHQ-2026-0001",
+        invoice_number="OPSDECK-2026-0001",
         subtotal=total,
         tax_rate=0.0,
         tax_amount=0.0,
